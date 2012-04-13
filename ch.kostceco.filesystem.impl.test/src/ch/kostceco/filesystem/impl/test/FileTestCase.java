@@ -90,6 +90,11 @@ public class FileTestCase
 			Assert.assertTrue(validator.checkFile(rightExtensionFile).isOK());
 			Assert.assertTrue(validator.checkDirectory(rightExtensionFile).isOK());
 			Assert.assertTrue(validator.checkExtension(rightExtensionFile, new String[] { ".siard" }).isOK());
+		
+			Assert.assertFalse(validator.validate(noFile).isOK());
+			Assert.assertFalse(validator.validate(folder).isOK());
+			Assert.assertFalse(validator.validate(wrongExtensionFile).isOK());
+			Assert.assertTrue(validator.validate(rightExtensionFile).isOK());
 		}
 	}
 

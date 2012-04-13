@@ -100,8 +100,7 @@ public class FileValidatorComponent implements FileValidator
 				status = checkExtension(file, siardService.getValidExtensions());
 			}
 		}
-
-		return null;
+		return status;
 	}
 
 }

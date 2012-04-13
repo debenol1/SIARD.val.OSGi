@@ -10,3 +10,8 @@ Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/siard.xml, OSGI-INF/list-structure.xml
 Bundle-ClassPath: lib/jdom-1.1.2.jar,
  .
+Import-Package: ch.kostceco.siard.api.service,
+ ch.kostceco.zip.api.service,
+ org.eclipse.osgi.framework.console;version="1.1.0",
+ org.osgi.framework;version="1.6.0",
+ org.osgi.service.component;version="1.1.0"

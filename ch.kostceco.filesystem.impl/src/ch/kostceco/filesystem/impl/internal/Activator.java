@@ -1,4 +1,4 @@
-package ch.kostceco.filesystem.impl;
+package ch.kostceco.filesystem.impl.internal;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

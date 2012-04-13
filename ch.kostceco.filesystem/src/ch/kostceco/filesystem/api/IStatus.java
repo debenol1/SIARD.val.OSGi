@@ -1,4 +1,4 @@
-package ch.kostceco.filesystem;
+package ch.kostceco.filesystem.api;
 
 import java.io.File;
 
@@ -6,7 +6,7 @@ public interface IStatus
 {
 	boolean isOK();
 	
-	void update(File target, boolean ok);
+	void update(boolean ok);
 	
 	String getAction();
 	

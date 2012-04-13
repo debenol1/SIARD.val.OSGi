@@ -1,8 +1,8 @@
-package ch.kostceco.filesystem.service;
+package ch.kostceco.filesystem.api.service;
 
 import java.io.File;
 
-import ch.kostceco.filesystem.IStatus;
+import ch.kostceco.filesystem.api.IStatus;
 
 public interface FileValidator 
 {
@@ -30,4 +30,11 @@ public interface FileValidator
 	 * @return status
 	 */
 	IStatus checkDirectory(File file);
+
+	/**
+	 * Validates by calling all relevant methods in a reasonable order (checkFile, checkDirectory, checkExtension)
+	 * @param file
+	 * @return
+	 */
+	IStatus validate(File file);
 }

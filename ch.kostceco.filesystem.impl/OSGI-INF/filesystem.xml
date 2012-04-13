@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" immediate="true" name="ch.kostceco.filesystem.service">
-   <implementation class="ch.kostceco.internal.filesystem.impl.FileValidatorComponent"/>
+   <implementation class="ch.kostceco.filesystem.impl.internal.FileValidatorComponent"/>
    <service>
-      <provide interface="ch.kostceco.filesystem.service.FileValidator"/>
+      <provide interface="ch.kostceco.filesystem.api.service.FileValidator"/>
    </service>
    <reference bind="setLogService" cardinality="1..1" interface="org.osgi.service.log.LogService" name="LogService" policy="static" unbind="clearLogService"/>
+   <reference bind="setSiardService" cardinality="1..1" interface="ch.kostceco.siard.api.service.SiardService" name="SiardSpecificationService" policy="static" unbind="clearSiardService"/>
 </scr:component>

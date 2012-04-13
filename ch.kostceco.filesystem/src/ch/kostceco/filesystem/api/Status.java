@@ -1,4 +1,4 @@
-package ch.kostceco.filesystem;
+package ch.kostceco.filesystem.api;
 
 import java.io.File;
 
@@ -6,14 +6,16 @@ public class Status implements IStatus
 {
 	private final Action action;
 	
-	public Status(Action action)
+	public Status(Action action, File file, boolean ok)
 	{
 		this.action = action;
+		this.action.file(file);
+		this.action.ok(ok);
 	}
 	
-	public static Status instance(Action action)
+	public static Status instance(Action action, File file, boolean ok)
 	{
-		return new Status(action);
+		return new Status(action, file, ok);
 	}
 	
 	@Override
@@ -23,10 +25,9 @@ public class Status implements IStatus
 	}
 
 	@Override
-	public void update(File target, boolean ok)
+	public void update(boolean ok)
 	{
 		this.action.ok(ok);
-		this.action.file(target);
 	}
 
 	@Override

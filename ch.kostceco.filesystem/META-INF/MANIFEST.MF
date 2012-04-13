@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Check File Extension Definition
-Bundle-SymbolicName: ch.kostceco.filesystem;singleton:=true
+Bundle-SymbolicName: ch.kostceco.filesystem.api;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: ch.kostceco.filesystem,
- ch.kostceco.filesystem.service
+Export-Package: ch.kostceco.filesystem.api,
+ ch.kostceco.filesystem.api.service

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Siard Specification Implementation
+Bundle-SymbolicName: ch.kostceco.siard.specification.impl.1.0;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: ch.kostceco.siard.impl.internal.Activator
+Bundle-Vendor: Christian Eugster
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/siard.xml, OSGI-INF/list-structure.xml
+Bundle-ClassPath: lib/jdom-1.1.2.jar,
+ .

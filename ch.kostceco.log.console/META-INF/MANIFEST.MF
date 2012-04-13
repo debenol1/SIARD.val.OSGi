@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Console Logging
+Bundle-SymbolicName: ch.kostceco.log.console;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Christian Eugster
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: ch.kostceco.log.service,
+ org.osgi.framework;version="1.6.0",
+ org.osgi.service.component;version="1.1.0"
+Service-Component: OSGI-INF/console-log.xml
+Bundle-ActivationPolicy: lazy

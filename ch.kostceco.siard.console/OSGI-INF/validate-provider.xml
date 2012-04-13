@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" name="ch.kostceco.siard.console.validator">
+   <implementation class="ch.kostceco.siard.console.ValidateProvider"/>
+   <service>
+      <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
+   </service>
+   <reference bind="setFileValidator" cardinality="1..1" interface="ch.kostceco.filesystem.service.FileValidator" name="FileValidator" policy="static" unbind="clearFileValidator"/>
+   <reference bind="setZipService" cardinality="1..1" interface="ch.kostceco.zip.service.ZipService" name="ZipService" policy="static" unbind="clearZipService"/>
+   <reference bind="setSiardSpecificationService" cardinality="1..1" interface="ch.kostceco.siard.specification.service.SiardSpecificationService" name="siardSpecificationService" policy="static" unbind="clearSiardSpecificationService"/>
+</scr:component>

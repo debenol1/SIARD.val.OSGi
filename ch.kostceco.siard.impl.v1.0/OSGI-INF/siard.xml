@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" immediate="true" name="ch.kostceco.siard.impl.1.0">
+   <implementation class="ch.kostceco.siard.impl.internal.SiardServiceComponent"/>
+   <service>
+      <provide interface="ch.kostceco.siard.api.service.SiardService"/>
+   </service>
+   <property name="siard.version" type="String" value="1.0"/>
+   <property name="siard.extensions" type="String">.siard
+.zip
+.zip64</property>
+   <reference bind="setZipService" cardinality="1..1" interface="ch.kostceco.zip.api.service.ZipService" name="ZipService" policy="static" unbind="clearZipService"/>
+</scr:component>

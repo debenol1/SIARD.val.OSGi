@@ -4,5 +4,5 @@
    <service>
       <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
    </service>
-   <reference bind="setSiardService" cardinality="1..1" interface="ch.kostceco.siard.api.service.SiardService" name="SiardSpecificationService" policy="static" unbind="clearSiardService"/>
+   <reference bind="setSiardService" cardinality="1..1" interface="ch.kostceco.siard.api.service.SiardService" name="SiardService" policy="static" unbind="clearSiardService"/>
 </scr:component>

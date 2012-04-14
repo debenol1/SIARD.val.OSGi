@@ -1,7 +1,14 @@
 package ch.kostceco.siard.impl.internal;
 
-import org.osgi.service.component.ComponentContext;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.log.LogService;
+
+import ch.kostceco.checksum.api.service.ChecksumService;
+import ch.kostceco.filesystem.api.service.FileSystem;
 import ch.kostceco.siard.api.service.SiardService;
 import ch.kostceco.zip.api.service.ZipService;
 
@@ -11,20 +18,38 @@ public class SiardServiceComponent implements SiardService
 	
 	private static final String PROPERTY_KEY_SIARD_EXTENSIONS = "siard.extensions";
 	
+	private LogService logService;
+	
 	private ZipService zipService;
+	
+	private FileSystem fileSystem;
+	
+	private ChecksumService checksumService;
 	
 	private ComponentContext context;
 	
 	protected void startup(ComponentContext context)
 	{
 		this.context = context;
+		this.logService.log(LogService.LOG_DEBUG, "Service " + this.getClass().getName() + " started.");
 	}
 	
 	protected void shutdown(ComponentContext context)
 	{
+		this.logService.log(LogService.LOG_DEBUG, "Service " + this.getClass().getName() + " started.");
 		this.context = null;
 	}
 
+	protected void setLogService(LogService service)
+	{
+		this.logService = service;
+	}
+	
+	protected void clearLogService(LogService service)
+	{
+		this.logService = null;
+	}
+	
 	protected void setZipService(ZipService service)
 	{
 		this.zipService = service;
@@ -35,12 +60,69 @@ public class SiardServiceComponent implements SiardService
 		this.zipService = null;
 	}
 	
+	protected void setFileSystem(FileSystem fileSystem)
+	{
+		this.fileSystem = fileSystem;
+	}
+	
+	protected void clearFileSystem(FileSystem fileSystem)
+	{
+		this.fileSystem = null;
+	}
+	
+	protected void setChecksumService(ChecksumService service)
+	{
+		this.checksumService = service;
+	}
+	
+	protected void clearChecksumService(ChecksumService service)
+	{
+		this.checksumService = null;
+	}
+	
 	@Override
 	public String getVersion()
 	{
 		return (String) context.getProperties().get(PROPERTY_KEY_SIARD_VERSION);
 	}
 	
+	@Override
+	public boolean validateHeaderMetadataXsd(File file) throws IOException
+	{
+		InputStream in = this.getClass().getResourceAsStream("/META-INF/metadata.xsd");
+		File internal = fileSystem.cache(in);
+		in.close();
+		in = this.getClass().getResourceAsStream("/META-INF/metadata.xsd");
+		File external = fileSystem.cache(in);
+		in.close();
+		return checksumService.compare(internal, external);
+	}
+	
+//	@Override
+//	public Document getDocument(InputStream inputStream, URL schema)
+//	{
+//		Document document = null;
+//		try
+//		{
+//			saxBuilder.setValidation(true);
+//			saxBuilder.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation", schema);
+//			document = saxBuilder.build(inputStream);
+//			Element root = document.getRootElement();
+//			System.out.println(root);
+//			return document;
+//		} 
+//		catch (IOException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} 
+//		catch (JDOMException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return document;
+//	}
 //	private Document getMetadataXml(String path) throws IOException, JDOMException
 //	{
 //		File file = new File(path);

@@ -7,8 +7,8 @@ import java.util.Enumeration;
 import java.util.zip.ZipException;
 
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.log.LogService;
 
-import ch.kostceco.log.service.LogService;
 import ch.kostceco.zip.api.IStatus;
 import ch.kostceco.zip.api.IStatus.Action;
 import ch.kostceco.zip.api.Status;
@@ -32,12 +32,12 @@ public class ZipServiceComponent implements ZipService
 	
 	protected void startup(ComponentContext context)
 	{
-		this.logService.log(LogService.Status.LOG_DEBUG, "Service " + this.getClass().getName() + " started.");
+		this.logService.log(LogService.LOG_DEBUG, "Service " + this.getClass().getName() + " started.");
 	}
 	
 	protected void shutdown(ComponentContext context)
 	{
-		this.logService.log(LogService.Status.LOG_DEBUG, "Service " + this.getClass().getName() + " stopped.");
+		this.logService.log(LogService.LOG_DEBUG, "Service " + this.getClass().getName() + " stopped.");
 	}
 	
 	@Override

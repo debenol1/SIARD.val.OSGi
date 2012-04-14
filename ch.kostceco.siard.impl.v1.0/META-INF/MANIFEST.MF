@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Siard Specification Implementation
-Bundle-SymbolicName: ch.kostceco.siard.specification.impl.1.0;singleton:=true
+Bundle-SymbolicName: ch.kostceco.siard.impl.1.0;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: ch.kostceco.siard.impl.internal.Activator
 Bundle-Vendor: Christian Eugster
@@ -10,7 +10,8 @@ Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/siard.xml, OSGI-INF/list-structure.xml
 Bundle-ClassPath: lib/jdom-1.1.2.jar,
  .
-Import-Package: ch.kostceco.siard.api.service,
+Import-Package: ch.kostceco.filesystem.api,
+ ch.kostceco.siard.api.service,
  ch.kostceco.zip.api.service,
  org.eclipse.osgi.framework.console;version="1.1.0",
  org.osgi.framework;version="1.6.0",

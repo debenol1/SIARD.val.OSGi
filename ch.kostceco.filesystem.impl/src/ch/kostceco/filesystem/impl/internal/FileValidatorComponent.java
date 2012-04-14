@@ -102,5 +102,4 @@ public class FileValidatorComponent implements FileValidator
 		}
 		return status;
 	}
-
 }

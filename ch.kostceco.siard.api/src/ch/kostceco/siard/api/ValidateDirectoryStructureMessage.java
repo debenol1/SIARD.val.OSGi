@@ -1,6 +1,5 @@
-package ch.kostceco.siard.impl.internal;
+package ch.kostceco.siard.api;
 
-import ch.kostceco.siard.api.IMessage;
 
 
 public enum ValidateDirectoryStructureMessage implements IMessage

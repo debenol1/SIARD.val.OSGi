@@ -3,18 +3,23 @@ package ch.kostceco.siard.impl.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
 import ch.kostceco.checksum.api.service.ChecksumService;
 import ch.kostceco.filesystem.api.service.FileSystem;
 import ch.kostceco.siard.api.Action;
-import ch.kostceco.siard.api.IAction;
-import ch.kostceco.siard.api.IMessage;
+import ch.kostceco.siard.api.CheckVersionMessage;
 import ch.kostceco.siard.api.IStatus;
 import ch.kostceco.siard.api.Status;
+import ch.kostceco.siard.api.ValidateDirectoryStructureMessage;
 import ch.kostceco.siard.api.service.SiardService;
 import ch.kostceco.zip.api.service.ZipService;
 
@@ -33,6 +38,8 @@ public class SiardServiceComponent implements SiardService
 	private ChecksumService checksumService;
 	
 	private ComponentContext context;
+
+	private SAXBuilder saxBuilder;
 	
 	protected void startup(ComponentContext context)
 	{
@@ -300,10 +307,45 @@ public class SiardServiceComponent implements SiardService
 	}
 
 	@Override
-	public IStatus<? extends IAction<? extends IMessage>, ? extends IMessage> checkVersion()
+	public IStatus<Action<CheckVersionMessage>, CheckVersionMessage> checkVersion(File file)
 	{
-		// TODO Auto-generated method stub
+		try
+		{
+			Document document = getDocument(file);
+			System.out.println();
+		} 
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
+	private Document getDocument(File file) throws IOException
+	{
+		InputStream inputStream = zipService.getInputStream(file, "header/metadata.xml");
+		URL schema = this.getClass().getResource("META-INF/metadata.xsd");
+		Document document = null;
+		try
+		{
+			saxBuilder.setValidation(true);
+			saxBuilder.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation", schema);
+			document = saxBuilder.build(inputStream);
+			Element root = document.getRootElement();
+			System.out.println(root);
+			return document;
+		} 
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (JDOMException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return document;
+	}
 }

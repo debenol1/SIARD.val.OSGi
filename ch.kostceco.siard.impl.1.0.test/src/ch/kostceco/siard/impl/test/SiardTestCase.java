@@ -1,7 +1,6 @@
 package ch.kostceco.siard.impl.test;
 
 import java.io.File;
-import java.io.IOException;
 
 import junit.framework.Assert;
 
@@ -10,9 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.osgi.util.tracker.ServiceTracker;
 
-import ch.kostceco.siard.api.IAction;
-import ch.kostceco.siard.api.IMessage;
+import ch.kostceco.siard.api.Action;
+import ch.kostceco.siard.api.CheckVersionMessage;
 import ch.kostceco.siard.api.IStatus;
+import ch.kostceco.siard.api.ValidateDirectoryStructureMessage;
 import ch.kostceco.siard.api.service.SiardService;
 import ch.kostceco.siard.impl.internal.Activator;
 
@@ -48,21 +48,15 @@ public class SiardTestCase
 	{
 		Assert.assertNotNull(service);
 
-		IStatus<? extends IAction<? extends IMessage>, ? extends IMessage> status = service.checkDirectoryStructure(file);
+		IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> status = service.checkDirectoryStructure(file);
 		Assert.assertTrue(status.isOK());
 	}
 
 	@Test
-	public void testValidateHeaderMetadataXsd()
+	public void testCheckVersion()
 	{
-		try
-		{
-			Assert.assertTrue(service.validateHeaderMetadataXsd(file));
-		} catch (IOException e)
-		{
-			Assert.assertFalse(false);
-		}
-
+		IStatus<Action<CheckVersionMessage>, CheckVersionMessage> status = service.checkVersion(file);
+		Assert.assertTrue(status.isOK());
 	}
 
 }

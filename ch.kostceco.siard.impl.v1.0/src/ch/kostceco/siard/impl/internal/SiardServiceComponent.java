@@ -326,7 +326,7 @@ public class SiardServiceComponent implements SiardService
 	private Document getDocument(File file) throws IOException
 	{
 		InputStream inputStream = zipService.getInputStream(file, "header/metadata.xml");
-		URL schema = this.getClass().getResource("META-INF/metadata.xsd");
+		URL schema = this.getClass().getResource("/META-INF/metadata.xsd");
 		Document document = null;
 		try
 		{

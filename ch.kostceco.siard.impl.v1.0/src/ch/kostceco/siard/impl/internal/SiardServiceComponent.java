@@ -44,6 +44,7 @@ public class SiardServiceComponent implements SiardService
 	protected void startup(ComponentContext context)
 	{
 		this.context = context;
+		this.saxBuilder = new SAXBuilder();
 		this.logService.log(LogService.LOG_DEBUG, "Service " + this.getClass().getName() + " started.");
 	}
 	

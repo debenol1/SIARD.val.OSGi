@@ -181,7 +181,20 @@ public class SiardServiceComponent implements SiardService
 	public IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkDirectoryStructure(File file)
 	{
 		IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status = new Status<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage>(new ValidateDirectoryStructureAction());
-		String[] directories = zipService.getDirectories(file);
+		try
+		{
+			checkDirectoryStructure(status, zipService.getDirectories(file));
+		} 
+		catch (IOException e)
+		{
+			status.update(ValidateDirectoryStructureMessage.FILE_FORMAT, false);
+			return status;
+		}
+		return status;
+	}
+
+	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkDirectoryStructure(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String[] directories)
+	{
 		for (String directory : directories)
 		{
 			String path[] = directory.split("/");
@@ -211,5 +224,4 @@ public class SiardServiceComponent implements SiardService
 		}
 		return status;
 	}
-	
 }

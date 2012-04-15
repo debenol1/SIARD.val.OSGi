@@ -5,7 +5,7 @@ import ch.kostceco.siard.api.IMessage;
 
 public enum ValidateDirectoryStructureMessage implements IMessage
 {
-	HEADER, CONTENT;
+	FILE_FORMAT, HEADER, CONTENT;
 	
 	private boolean valid;
 	
@@ -25,9 +25,17 @@ public enum ValidateDirectoryStructureMessage implements IMessage
 	{
 		switch (this)
 		{
+		case FILE_FORMAT:
+		{
+			return valid ? "OK" : "Invalid file format";
+		}
 		case HEADER:
 		{
-			return valid ? "OK" : "Directory header missing";
+			return valid ? "OK" : "Directory \"header\" missing";
+		}
+		case CONTENT:
+		{
+			return valid ? "OK" : "Directory \"content\" missing";
 		}
 		default:
 		{

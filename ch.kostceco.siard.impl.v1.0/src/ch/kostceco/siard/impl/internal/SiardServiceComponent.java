@@ -9,6 +9,8 @@ import org.osgi.service.log.LogService;
 
 import ch.kostceco.checksum.api.service.ChecksumService;
 import ch.kostceco.filesystem.api.service.FileSystem;
+import ch.kostceco.siard.api.IStatus;
+import ch.kostceco.siard.api.Status;
 import ch.kostceco.siard.api.service.SiardService;
 import ch.kostceco.zip.api.service.ZipService;
 
@@ -173,6 +175,41 @@ public class SiardServiceComponent implements SiardService
 			return (String[]) property;
 		}
 		return new String[0];
+	}
+
+	@Override
+	public IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkDirectoryStructure(File file)
+	{
+		IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status = new Status<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage>(new ValidateDirectoryStructureAction());
+		String[] directories = zipService.getDirectories(file);
+		for (String directory : directories)
+		{
+			String path[] = directory.split("/");
+			if (path.length == 1)
+			{
+				/*
+				 * top level element
+				 */
+			}
+			if (directory.equals("header/"))
+			{
+				status.getAction().addMessage(ValidateDirectoryStructureMessage.HEADER, true);
+			}
+			else if (directory.equals("content/"))
+			{
+				status.getAction().addMessage(ValidateDirectoryStructureMessage.CONTENT, true);
+			}
+//			else if (directory.startsWith("content/schema"))
+//			{
+//				String[] elements = directory.split("/");
+//				System.out.println(elements);
+//				if (elements.length > 4)
+//				{
+//					status.update(ok)
+//				}
+//			}
+		}
+		return status;
 	}
 	
 }

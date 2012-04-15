@@ -3,6 +3,8 @@ package ch.kostceco.zip.impl.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.zip.ZipException;
 
@@ -207,6 +209,19 @@ public class ZipServiceComponent implements ZipService
 	public enum Method
 	{
 		STORED, DEFLATED, BZIP2, UNKNOWN;
+	}
+
+	@Override
+	public String[] getDirectories(File file) throws IOException
+	{
+		Collection<String> directories = new ArrayList<String>();
+		ZipFile zipFile = new ZipFile(file);
+		Enumeration<? extends ZipEntry> entries = zipFile.entries();
+		while (entries.hasMoreElements())
+		{
+			directories.add(entries.nextElement().getName());
+		}
+		return directories.toArray(new String[0]);
 	}
 
 }

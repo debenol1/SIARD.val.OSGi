@@ -43,6 +43,14 @@ public interface ZipService
 
 	InputStream getInputStream(File file, String element) throws IOException;
 
+	/**
+	 * collects the directory entries of the zip file and returns them as an array of strings
+	 * 
+	 * @param file
+	 * @return
+	 */
+	String[] getDirectories(File file) throws IOException;
+	
 	public enum Method
 	{
 		HEADER_CHECK, FULL_CHECK;

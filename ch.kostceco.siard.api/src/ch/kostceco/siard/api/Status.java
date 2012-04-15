@@ -1,44 +1,30 @@
 package ch.kostceco.siard.api;
 
-import java.io.File;
 
-public class Status implements IStatus
+public class Status<A extends IAction<M>, M extends IMessage> implements IStatus<A, M>
 {
-	private final Action action;
+	private final A action;
 	
-	public Status(Action action, File file, boolean ok)
+	public Status(A action)
 	{
 		this.action = action;
-		this.action.file(file);
-		this.action.ok(ok);
-	}
-	
-	public static Status instance(Action action, File file, boolean ok)
-	{
-		return new Status(action, file, ok);
 	}
 	
 	@Override
 	public boolean isOK()
 	{
-		return action.ok();
+		return action.isOK();
 	}
 
 	@Override
-	public void update(boolean ok)
+	public A getAction()
 	{
-		this.action.ok(ok);
+		return action;
 	}
 
 	@Override
-	public String getMessage()
+	public void update(M message, boolean valid)
 	{
-		return action.message();
-	}
-
-	@Override
-	public String getAction()
-	{
-		return action.action();
+		action.addMessage(message, valid);
 	}
 }

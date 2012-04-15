@@ -36,7 +36,7 @@ public class SiardTestCase
 		SiardService service = tracker.getService();
 		Assert.assertNotNull(service);
 
-		String path = "U:/Incubator Projekte/SIARD.val/Documentation/gebaeudeversicherung.siard";
+		String path = "U:/Incubator Projekte/SIARD.val/Test Data/gebaeudeversicherung.siard";
 		File file = new File(path);
 		try
 		{

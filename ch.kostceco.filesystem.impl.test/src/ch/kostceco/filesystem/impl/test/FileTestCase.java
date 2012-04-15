@@ -104,7 +104,7 @@ public class FileTestCase
 	
 		Assert.assertFalse(validator.validate(noFile).isOK());
 		Assert.assertFalse(validator.validate(folder).isOK());
-		Assert.assertFalse(validator.validate(wrongExtensionFile).isOK());
+		Assert.assertTrue(validator.validate(wrongExtensionFile).isOK());
 		Assert.assertTrue(validator.validate(rightExtensionFile).isOK());
 
 		FileSystem system = systemTracker.getService();

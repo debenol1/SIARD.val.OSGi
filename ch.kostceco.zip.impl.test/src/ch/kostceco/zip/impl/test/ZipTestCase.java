@@ -15,7 +15,7 @@ import ch.kostceco.zip.impl.internal.Activator;
 
 public class ZipTestCase
 {
-	private final String path = "U:/Incubator Projekte/SIARD.val/Documentation/test";
+	private final String path = "U:/Incubator Projekte/SIARD.val/Test Data";
 	
 	private ServiceTracker<ZipService, ZipService> tracker;
 
@@ -30,7 +30,6 @@ public class ZipTestCase
 		/*
 		 * Initialize folder for testfiles in user home.
 		 */
-		String path = System.getProperty("user.home").concat(File.separator.concat("SIARD.val.OSGi-Test"));
 		dir = new File(path);
 		if (!dir.exists())
 		{

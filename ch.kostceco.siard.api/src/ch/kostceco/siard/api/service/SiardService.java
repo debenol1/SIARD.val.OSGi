@@ -11,6 +11,8 @@ public interface SiardService
 {
 	String getVersion();
 	
+	IStatus<? extends IAction<? extends IMessage>, ? extends IMessage> checkVersion();
+	
 	boolean validateHeaderMetadataXsd(File file) throws IOException;
 	
 	String[] getValidExtensions();

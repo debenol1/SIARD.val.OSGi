@@ -10,6 +10,9 @@ import org.osgi.service.log.LogService;
 
 import ch.kostceco.checksum.api.service.ChecksumService;
 import ch.kostceco.filesystem.api.service.FileSystem;
+import ch.kostceco.siard.api.Action;
+import ch.kostceco.siard.api.IAction;
+import ch.kostceco.siard.api.IMessage;
 import ch.kostceco.siard.api.IStatus;
 import ch.kostceco.siard.api.Status;
 import ch.kostceco.siard.api.service.SiardService;
@@ -140,29 +143,6 @@ public class SiardServiceComponent implements SiardService
 //		return document;
 //	}
 	
-//	@Override
-//	public IStatus checkDirectoryStructure(String path)
-//	{
-//		IStatus status = Status.OK_STATUS;
-//		File file = new File(path);
-//		try
-//		{
-//			Document document = getMetadataXml(path);
-//			Element root = document.getRootElement();
-//			System.out.println(root);
-//		}
-//		catch (IOException e)
-//		{
-//			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Datei " + file.getName() + " in " + file.getParent() + " konnte nicht gelesen werden.", e);
-//		} 
-//		catch (JDOMException e)
-//		{
-//			e.printStackTrace();
-//			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Ungültiges Dateiformat.", e);
-//		}
-//		return status;
-//	}
-
 	@Override
 	public String[] getValidExtensions()
 	{
@@ -179,9 +159,9 @@ public class SiardServiceComponent implements SiardService
 	}
 
 	@Override
-	public IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkDirectoryStructure(File file)
+	public IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> checkDirectoryStructure(File file)
 	{
-		IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status = new Status<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage>(new ValidateDirectoryStructureAction());
+		IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> status = new Status<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage>(new Action<ValidateDirectoryStructureMessage>());
 		try
 		{	
 			String[] directories = zipService.getDirectories(file);
@@ -196,7 +176,7 @@ public class SiardServiceComponent implements SiardService
 		return status;
 	}
 
-	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkDirectoryStructure(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String[] directories)
+	private IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> checkDirectoryStructure(IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> status, String[] directories)
 	{
 		Arrays.sort(directories);
 		for (String directory : directories)
@@ -228,7 +208,7 @@ public class SiardServiceComponent implements SiardService
 		return status;
 	}
 	
-	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkRoot(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String entry)
+	private IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> checkRoot(IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> status, String entry)
 	{
 		if (entry.equals("header/"))
 		{
@@ -245,7 +225,7 @@ public class SiardServiceComponent implements SiardService
 		return status;
 	}
 
-	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkContent(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String entry)
+	private IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> checkContent(IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> status, String entry)
 	{
 		if (entry.startsWith("content/schema"))
 		{
@@ -274,7 +254,7 @@ public class SiardServiceComponent implements SiardService
 		return status;
 	}
 	
-	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkSchema(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String entry)
+	private IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> checkSchema(IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> status, String entry)
 	{
 		String schema = entry.replace("schema", "");
 		try
@@ -289,7 +269,7 @@ public class SiardServiceComponent implements SiardService
 		return status;
 	}
 	
-	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkTable(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String entry)
+	private IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> checkTable(IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> status, String entry)
 	{
 		String table = entry.replace("table", "");
 		try
@@ -304,7 +284,7 @@ public class SiardServiceComponent implements SiardService
 		return status;
 	}
 	
-	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkLob(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String entry)
+	private IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> checkLob(IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> status, String entry)
 	{
 		String lob = entry.replace("lob", "");
 		try
@@ -317,6 +297,13 @@ public class SiardServiceComponent implements SiardService
 			status.update(ValidateDirectoryStructureMessage.LOB, false);
 		}
 		return status;
+	}
+
+	@Override
+	public IStatus<? extends IAction<? extends IMessage>, ? extends IMessage> checkVersion()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

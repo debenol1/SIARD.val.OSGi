@@ -10,6 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.osgi.util.tracker.ServiceTracker;
 
+import ch.kostceco.siard.api.IAction;
+import ch.kostceco.siard.api.IMessage;
+import ch.kostceco.siard.api.IStatus;
 import ch.kostceco.siard.api.service.SiardService;
 import ch.kostceco.siard.impl.internal.Activator;
 
@@ -38,6 +41,10 @@ public class SiardTestCase
 
 		String path = "U:/Incubator Projekte/SIARD.val/Test Data/gebaeudeversicherung.siard";
 		File file = new File(path);
+
+		IStatus<? extends IAction<? extends IMessage>, ? extends IMessage> status = service.checkDirectoryStructure(file);
+		Assert.assertTrue(status.isOK());
+
 		try
 		{
 			Assert.assertTrue(service.validateHeaderMetadataXsd(file));
@@ -45,6 +52,7 @@ public class SiardTestCase
 		{
 			Assert.assertFalse(false);
 		}
+
 	}
 
 }

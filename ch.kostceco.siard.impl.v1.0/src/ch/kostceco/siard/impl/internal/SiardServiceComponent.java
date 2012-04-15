@@ -3,6 +3,7 @@ package ch.kostceco.siard.impl.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
@@ -182,8 +183,10 @@ public class SiardServiceComponent implements SiardService
 	{
 		IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status = new Status<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage>(new ValidateDirectoryStructureAction());
 		try
-		{
-			checkDirectoryStructure(status, zipService.getDirectories(file));
+		{	
+			String[] directories = zipService.getDirectories(file);
+			status.update(ValidateDirectoryStructureMessage.FILE_FORMAT, true);
+			checkDirectoryStructure(status, directories);
 		} 
 		catch (IOException e)
 		{
@@ -195,6 +198,7 @@ public class SiardServiceComponent implements SiardService
 
 	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkDirectoryStructure(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String[] directories)
 	{
+		Arrays.sort(directories);
 		for (String directory : directories)
 		{
 			String path[] = directory.split("/");
@@ -202,26 +206,117 @@ public class SiardServiceComponent implements SiardService
 			{
 				/*
 				 * top level element
+				 * 
+				 * There are only two top level elements allowed:
+				 * 
+				 * header/
+				 * content/
+				 * 
+				 * both are directories
 				 */
+				checkRoot(status, directory);
 			}
-			if (directory.equals("header/"))
+			else if (directory.startsWith("header/"))
 			{
-				status.getAction().addMessage(ValidateDirectoryStructureMessage.HEADER, true);
+				status.update(ValidateDirectoryStructureMessage.NESTED_HEADER_DIRECTORY, false);
 			}
-			else if (directory.equals("content/"))
+			else if (directory.startsWith("content/"))
 			{
-				status.getAction().addMessage(ValidateDirectoryStructureMessage.CONTENT, true);
+				status = checkContent(status, directory);
 			}
-//			else if (directory.startsWith("content/schema"))
-//			{
-//				String[] elements = directory.split("/");
-//				System.out.println(elements);
-//				if (elements.length > 4)
-//				{
-//					status.update(ok)
-//				}
-//			}
 		}
 		return status;
 	}
+	
+	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkRoot(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String entry)
+	{
+		if (entry.equals("header/"))
+		{
+			status.update(ValidateDirectoryStructureMessage.HEADER, true);
+		}
+		else if (entry.equals("content/"))
+		{
+			status.update(ValidateDirectoryStructureMessage.CONTENT, true);
+		}
+		else
+		{
+			status.update(ValidateDirectoryStructureMessage.TOP_LEVEL_ENTRY, false);
+		}
+		return status;
+	}
+
+	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkContent(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String entry)
+	{
+		if (entry.startsWith("content/schema"))
+		{
+			String[] elements = entry.split("/");
+			if (elements.length == 2)
+			{
+				status = checkSchema(status, elements[1]);
+			}
+			else if (elements.length == 3)
+			{
+				status = checkTable(status, elements[2]);
+			}
+			else if (elements.length == 4)
+			{
+				status = checkLob(status, elements[3]);
+			}
+			else
+			{
+				status.update(ValidateDirectoryStructureMessage.CONTENT, false);
+			}
+		}
+		else
+		{
+			status.update(ValidateDirectoryStructureMessage.SCHEMA, false);
+		}
+		return status;
+	}
+	
+	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkSchema(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String entry)
+	{
+		String schema = entry.replace("schema", "");
+		try
+		{
+			Integer.valueOf(schema);
+			status.update(ValidateDirectoryStructureMessage.SCHEMA, true);
+		}
+		catch (NumberFormatException e)
+		{
+			status.update(ValidateDirectoryStructureMessage.SCHEMA, false);
+		}
+		return status;
+	}
+	
+	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkTable(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String entry)
+	{
+		String table = entry.replace("table", "");
+		try
+		{
+			Integer.valueOf(table);
+			status.update(ValidateDirectoryStructureMessage.TABLE, true);
+		}
+		catch (NumberFormatException e)
+		{
+			status.update(ValidateDirectoryStructureMessage.TABLE, false);
+		}
+		return status;
+	}
+	
+	private IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> checkLob(IStatus<ValidateDirectoryStructureAction, ValidateDirectoryStructureMessage> status, String entry)
+	{
+		String lob = entry.replace("lob", "");
+		try
+		{
+			Integer.valueOf(lob);
+			status.update(ValidateDirectoryStructureMessage.LOB, true);
+		}
+		catch (NumberFormatException e)
+		{
+			status.update(ValidateDirectoryStructureMessage.LOB, false);
+		}
+		return status;
+	}
+	
 }

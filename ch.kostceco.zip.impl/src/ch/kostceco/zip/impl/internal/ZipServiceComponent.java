@@ -219,7 +219,11 @@ public class ZipServiceComponent implements ZipService
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		while (entries.hasMoreElements())
 		{
-			directories.add(entries.nextElement().getName());
+			String name = entries.nextElement().getName();
+			if (name.endsWith("/"))
+			{
+				directories.add(name);
+			}
 		}
 		return directories.toArray(new String[0]);
 	}

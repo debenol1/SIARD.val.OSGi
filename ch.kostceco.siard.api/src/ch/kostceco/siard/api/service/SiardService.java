@@ -3,6 +3,8 @@ package ch.kostceco.siard.api.service;
 import java.io.File;
 import java.io.IOException;
 
+import ch.kostceco.siard.api.IAction;
+import ch.kostceco.siard.api.IMessage;
 import ch.kostceco.siard.api.IStatus;
 
 public interface SiardService
@@ -13,5 +15,5 @@ public interface SiardService
 	
 	String[] getValidExtensions();
 	
-	IStatus checkDirectoryStructure(File file);
+	IStatus<? extends IAction<? extends IMessage>, ? extends IMessage> checkDirectoryStructure(File file);
 }

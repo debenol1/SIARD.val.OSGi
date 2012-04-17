@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" immediate="true" name="ch.kostceco.checksum.impl">
+   <implementation class="ch.kostceco.checksum.impl.internal.service.ChecksumServiceComponent"/>
+   <service>
+      <provide interface="ch.kostceco.checksum.api.service.ChecksumService"/>
+   </service>
+   <reference bind="setLogService" cardinality="1..1" interface="org.osgi.service.log.LogService" name="LogService" policy="static" unbind="releaseLogService"/>
+</scr:component>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" immediate="true" name="ch.kostceco.zip.service">
+   <implementation class="ch.kostceco.zip.impl.internal.service.ZipServiceComponent"/>
+   <service>
+      <provide interface="ch.kostceco.zip.api.service.ZipService"/>
+   </service>
+   <reference bind="setLogService" cardinality="1..1" interface="org.osgi.service.log.LogService" name="LogService" policy="static" unbind="releaseLogService"/>
+</scr:component>

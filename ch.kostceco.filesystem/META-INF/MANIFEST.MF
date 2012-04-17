@@ -5,5 +5,5 @@ Bundle-SymbolicName: ch.kostceco.filesystem.api;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: ch.kostceco.filesystem.api,
- ch.kostceco.filesystem.api.service
+Export-Package: ch.kostceco.filesystem.api.service
+Import-Package: org.eclipse.core.runtime;version="3.4.0"

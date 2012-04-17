@@ -1,10 +1,9 @@
 package ch.kostceco.filesystem.impl.test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import junit.framework.Assert;
 
@@ -21,55 +20,56 @@ public class FileTestCase
 {
 	private ServiceTracker<FileValidator, FileValidator> validatorTracker;
 
+	private FileValidator validator;
+	
 	private ServiceTracker<FileSystem, FileSystem> systemTracker;
 
-	private File dir;
+	private FileSystem system;
 	
-	private File noFile;
+	private File pdf;
 	
-	private File folder;
-	
-	private File wrongExtensionFile;
-	
-	private File rightExtensionFile;
+	private File siard;
 	
 	@Before
 	public void setUp() throws Exception
 	{
 		validatorTracker = new ServiceTracker<FileValidator, FileValidator>(Activator.getBundleContext(), FileValidator.class, null);
 		validatorTracker.open();
+		validator = validatorTracker.getService();
 
 		systemTracker = new ServiceTracker<FileSystem, FileSystem>(Activator.getBundleContext(), FileSystem.class, null);
 		systemTracker.open();
 
-		/*
-		 * Initialize folder for testfiles in user home.
-		 */
-		String path = System.getProperty("user.home").concat(File.separator.concat("SIARD.val.OSGi-Test"));
-		dir = new File(path);
-		if (!dir.exists())
+		File tmp = File.createTempFile("tmp_", ".siard");
+		
+		siard = new File(tmp.getParent().concat(File.separator.concat("gebaeudeversicherung.siard")));
+		if (!siard.exists())
 		{
-			dir.mkdirs();
+			InputStream in = this.getClass().getResourceAsStream("gebaeudeversicherung.siard");
+			OutputStream out = new FileOutputStream(siard);
+			while (in.available() > 0)
+			{
+				byte[] b = new byte[in.available()];
+				int len = in.read(b);
+				out.write(b, 0, len);
+			}
+			in.close();
+			out.close();
 		}
 
-		/*
-		 * create some files
-		 */
-		noFile = new File(dir.getAbsolutePath().concat(File.separator.concat("inexistent-file.siard")));
-		folder = new File(dir.getAbsolutePath().concat(File.separator.concat("directory.siard")));
-		if (!folder.exists())
+		pdf = new File(tmp.getParent().concat(File.separator.concat("test.pdf")));
+		if (!pdf.exists())
 		{
-			folder.mkdirs();
-		}
-		wrongExtensionFile = new File(dir.getAbsolutePath().concat(File.separator.concat("wrong-extension-file.zip")));
-		if (!wrongExtensionFile.exists())
-		{
-			wrongExtensionFile.createNewFile();
-		}
-		rightExtensionFile = new File(dir.getAbsolutePath().concat(File.separator.concat("right-extension-file.siard")));
-		if (!rightExtensionFile.exists())
-		{
-			rightExtensionFile.createNewFile();
+			InputStream in = this.getClass().getResourceAsStream("test.pdf");
+			OutputStream out = new FileOutputStream(pdf);
+			while (in.available() > 0)
+			{
+				byte[] b = new byte[in.available()];
+				int len = in.read(b);
+				out.write(b, 0, len);
+			}
+			in.close();
+			out.close();
 		}
 	}
 
@@ -81,51 +81,27 @@ public class FileTestCase
 	}
 
 	@Test
-	public void test()
+	public void testNullFile()
 	{
-		FileValidator validator = validatorTracker.getService();
 		Assert.assertNotNull(validator);
-
-		Assert.assertFalse(validator.checkFile(noFile).isOK());
-		Assert.assertTrue(validator.checkDirectory(noFile).isOK());
-		Assert.assertTrue(validator.checkExtension(noFile, new String[] { ".siard" }).isOK());
-
-		Assert.assertTrue(validator.checkFile(folder).isOK());
-		Assert.assertFalse(validator.checkDirectory(folder).isOK());
-		Assert.assertTrue(validator.checkExtension(folder, new String[] { ".siard" }).isOK());
-
-		Assert.assertTrue(validator.checkFile(wrongExtensionFile).isOK());
-		Assert.assertTrue(validator.checkDirectory(wrongExtensionFile).isOK());
-		Assert.assertFalse(validator.checkExtension(wrongExtensionFile, new String[] { ".siard" }).isOK());
-
-		Assert.assertTrue(validator.checkFile(rightExtensionFile).isOK());
-		Assert.assertTrue(validator.checkDirectory(rightExtensionFile).isOK());
-		Assert.assertTrue(validator.checkExtension(rightExtensionFile, new String[] { ".siard" }).isOK());
-	
-		Assert.assertFalse(validator.validate(noFile).isOK());
-		Assert.assertFalse(validator.validate(folder).isOK());
-		Assert.assertTrue(validator.validate(wrongExtensionFile).isOK());
-		Assert.assertTrue(validator.validate(rightExtensionFile).isOK());
-
-		FileSystem system = systemTracker.getService();
-		Assert.assertNotNull(system);
-		
-		File file = new File("U:/Incubator Projekte/SIARD.val/Documentation/gebaeudeversicherung.siard");
-		InputStream inputStream;
-		try
-		{
-			inputStream = new FileInputStream(file);
-			File handle = system.cache(inputStream);
-			Assert.assertTrue(handle.exists());
-		} 
-		catch (FileNotFoundException e)
-		{
-			Assert.fail(e.getLocalizedMessage());
-		} 
-		catch (IOException e)
-		{
-			Assert.fail(e.getLocalizedMessage());
-		}
+		Assert.assertFalse(validator.checkReadable(new File("")).isOK());
+		Assert.assertTrue(validator.checkDirectory(new File("")).isOK());
+		Assert.assertFalse(validator.validate(new File("")).isOK());
 	}
-
+	
+	public void testPdfFile()
+	{
+		Assert.assertNotNull(validator);
+		Assert.assertTrue(validator.checkReadable(pdf).isOK());
+		Assert.assertTrue(validator.checkDirectory(pdf).isOK());
+		Assert.assertTrue(validator.validate(pdf).isOK());
+	}
+	
+	public void testSiardFile()
+	{
+		Assert.assertNotNull(validator);
+		Assert.assertTrue(validator.checkReadable(siard).isOK());
+		Assert.assertTrue(validator.checkDirectory(siard).isOK());
+		Assert.assertTrue(validator.validate(siard).isOK());
+	}
 }

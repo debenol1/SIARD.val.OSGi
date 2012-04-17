@@ -1,18 +1,15 @@
 package ch.kostceco.siard.impl.test;
 
 import java.io.File;
-
-import junit.framework.Assert;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.util.tracker.ServiceTracker;
 
-import ch.kostceco.siard.api.Action;
-import ch.kostceco.siard.api.CheckVersionMessage;
-import ch.kostceco.siard.api.IStatus;
-import ch.kostceco.siard.api.ValidateDirectoryStructureMessage;
 import ch.kostceco.siard.api.service.SiardService;
 import ch.kostceco.siard.impl.internal.Activator;
 
@@ -44,19 +41,21 @@ public class SiardTestCase
 	}
 
 	@Test
-	public void testDirectoryStructure()
+	public void testContentStructure()
 	{
-		Assert.assertNotNull(service);
-
-		IStatus<Action<ValidateDirectoryStructureMessage>, ValidateDirectoryStructureMessage> status = service.checkDirectoryStructure(file);
-		Assert.assertTrue(status.isOK());
+		try
+		{
+			Enumeration<? extends ZipEntry> entries = service.listEntries(file);
+			while (entries.hasMoreElements())
+			{
+				ZipEntry entry = entries.nextElement();
+				System.out.println(entry.getName() + " " + entry.getCompressedSize() + " " + entry.getSize());
+			}
+		} 
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-
-	@Test
-	public void testCheckVersion()
-	{
-		IStatus<Action<CheckVersionMessage>, CheckVersionMessage> status = service.checkVersion(file);
-		Assert.assertTrue(status.isOK());
-	}
-
 }

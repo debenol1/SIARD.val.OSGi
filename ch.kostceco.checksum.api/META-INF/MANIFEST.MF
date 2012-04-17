@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Checksum Api
-Bundle-SymbolicName: ch.kostceco.checksum.api
+Bundle-SymbolicName: ch.kostceco.checksum.api;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

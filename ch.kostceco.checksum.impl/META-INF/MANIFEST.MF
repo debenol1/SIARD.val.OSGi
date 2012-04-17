@@ -7,7 +7,7 @@ Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: lib/jacksum.jar,
  .
-Service-Component: OSGI-INF/checksum.xml
+Service-Component: OSGI-INF/checksum-component.xml
 Import-Package: ch.kostceco.checksum.api.service,
  org.osgi.framework;version="1.6.0",
  org.osgi.service.component;version="1.1.0",

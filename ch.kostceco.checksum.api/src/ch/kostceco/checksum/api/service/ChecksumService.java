@@ -1,9 +1,11 @@
 package ch.kostceco.checksum.api.service;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public interface ChecksumService
 {
-	boolean compare(File file1, File file2) throws IOException;
+	String getChecksum(InputStream in) throws IOException;
+
+	String[] getAvailableDigests();
 }

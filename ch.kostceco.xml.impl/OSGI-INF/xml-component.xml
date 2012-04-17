@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.kostceco.xml.service">
+   <implementation class="ch.kostceco.xml.impl.internal.service.XmlServiceComponent"/>
+   <service>
+      <provide interface="ch.kostceco.xml.api.service.XmlService"/>
+   </service>
+</scr:component>

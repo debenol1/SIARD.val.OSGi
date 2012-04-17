@@ -2,27 +2,18 @@ package ch.kostceco.filesystem.api.service;
 
 import java.io.File;
 
-import ch.kostceco.filesystem.api.IStatus;
+import org.eclipse.core.runtime.IStatus;
 
 public interface FileValidator 
 {
 	/**
-	 * Checks if file exists
+	 * Checks if file exists and is readable
 	 * 
 	 * @param file the file to check
 	 * @return status
 	 */
-	IStatus checkFile(File file);
+	IStatus checkReadable(File file);
 
-	/**
-	 * Checks the filename against a list of valid extensions
-	 *
-	 * @param file the file to check
-	 * @param extensions an array of valid extensions to check against
-	 * @return status
-	 */
-	IStatus checkExtension(File file, String[] extensions);
-	
 	/**
 	 * Checks if the file is a directory (must not be a directory
 	 * 

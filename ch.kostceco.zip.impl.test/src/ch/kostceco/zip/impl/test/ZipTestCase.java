@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.kostceco.zip.api.service.ZipService;
-import ch.kostceco.zip.api.service.ZipService.Method;
 import ch.kostceco.zip.impl.internal.Activator;
 
 public class ZipTestCase
@@ -19,7 +18,11 @@ public class ZipTestCase
 	
 	private ServiceTracker<ZipService, ZipService> tracker;
 
-	private File dir;
+	private ZipService service;
+	
+	private File pdf;
+	
+	private File siard;
 	
 	@Before
 	public void setUp() throws Exception
@@ -27,15 +30,15 @@ public class ZipTestCase
 		tracker = new ServiceTracker<ZipService, ZipService>(Activator.getBundleContext(), ZipService.class, null);
 		tracker.open();
 		
-		/*
-		 * Initialize folder for testfiles in user home.
-		 */
-		dir = new File(path);
-		if (!dir.exists())
-		{
-			dir.mkdirs();
-		}
+		service = tracker.getService();
 
+		/*
+		 * preconditions: the files gebaeudeversicherung.siard and test.pdf must be in the users temp directory befor executing the tests
+		 * 
+		 */
+		File tmp = File.createTempFile("tmp_", ".siard");
+		siard = new File(tmp.getParent().concat(File.separator.concat("gebaeudeversicherung.siard")));
+		pdf = new File(tmp.getParent().concat(File.separator.concat("test.pdf")));
 	}
 	
 	@After
@@ -45,36 +48,26 @@ public class ZipTestCase
 	}
 
 	@Test
-	public void test()
+	public void testIntegrity()
 	{
-		ZipService service = tracker.getService();
-		if (service != null)
-		{
-
-			Assert.assertFalse(service.validateZip(new File(dir.getAbsolutePath().concat(File.separator.concat("is-a-pdf.siard")))).isOK());
-			Assert.assertTrue(service.validateZip(new File(dir.getAbsolutePath().concat(File.separator.concat("gebaeudeversicherung.siard")))).isOK());
-			Assert.assertTrue(service.validateZip(new File(dir.getAbsolutePath().concat(File.separator.concat("gebaeudeversicherung.zip")))).isOK());
-			Assert.assertTrue(service.validateZip(new File(dir.getAbsolutePath().concat(File.separator.concat("Northwind.siard")))).isOK());
-			Assert.assertTrue(service.validateZip(new File(dir.getAbsolutePath().concat(File.separator.concat("Northwind.zip")))).isOK());
-
-			Assert.assertFalse(service.validateZip(new File(dir.getAbsolutePath().concat(File.separator.concat("is-a-pdf.siard"))), Method.FULL_CHECK).isOK());
-			Assert.assertTrue(service.validateZip(new File(dir.getAbsolutePath().concat(File.separator.concat("gebaeudeversicherung.siard"))), Method.FULL_CHECK).isOK());
-			Assert.assertTrue(service.validateZip(new File(dir.getAbsolutePath().concat(File.separator.concat("gebaeudeversicherung.zip"))), Method.FULL_CHECK).isOK());
-			Assert.assertTrue(service.validateZip(new File(dir.getAbsolutePath().concat(File.separator.concat("Northwind.siard"))), Method.FULL_CHECK).isOK());
-			Assert.assertTrue(service.validateZip(new File(dir.getAbsolutePath().concat(File.separator.concat("Northwind.zip"))), Method.FULL_CHECK).isOK());
-
-			Assert.assertFalse(service.checkCompression(new File(dir.getAbsolutePath().concat(File.separator.concat("is-a-pdf.siard")))).isOK());
-			Assert.assertTrue(service.checkCompression(new File(dir.getAbsolutePath().concat(File.separator.concat("gebaeudeversicherung.siard")))).isOK());
-			Assert.assertFalse(service.checkCompression(new File(dir.getAbsolutePath().concat(File.separator.concat("gebaeudeversicherung.zip")))).isOK());
-			Assert.assertTrue(service.checkCompression(new File(dir.getAbsolutePath().concat(File.separator.concat("Northwind.siard")))).isOK());
-			Assert.assertTrue(service.checkCompression(new File(dir.getAbsolutePath().concat(File.separator.concat("Northwind.zip")))).isOK());
-
-			Assert.assertFalse(service.checkEncryption(new File(dir.getAbsolutePath().concat(File.separator.concat("is-a-pdf.siard")))).isOK());
-			Assert.assertTrue(service.checkEncryption(new File(dir.getAbsolutePath().concat(File.separator.concat("gebaeudeversicherung.siard")))).isOK());
-			Assert.assertTrue(service.checkEncryption(new File(dir.getAbsolutePath().concat(File.separator.concat("gebaeudeversicherung.zip")))).isOK());
-			Assert.assertTrue(service.checkEncryption(new File(dir.getAbsolutePath().concat(File.separator.concat("Northwind.siard")))).isOK());
-			Assert.assertTrue(service.checkEncryption(new File(dir.getAbsolutePath().concat(File.separator.concat("Northwind.zip")))).isOK());
-		}
+		Assert.assertNotNull(service);
+		Assert.assertFalse(service.checkIntegrity(pdf).isOK());
+		Assert.assertTrue(service.checkIntegrity(siard).isOK());
 	}
-
+	
+	@Test
+	public void testCompression()
+	{
+		Assert.assertNotNull(service);
+		Assert.assertFalse(service.checkCompression(pdf).isOK());
+		Assert.assertTrue(service.checkCompression(siard).isOK());
+	}
+	
+	@Test
+	public void testEncryption()
+	{
+		Assert.assertNotNull(service);
+		Assert.assertFalse(service.checkEncryption(pdf).isOK());
+		Assert.assertTrue(service.checkEncryption(siard).isOK());
+	}
 }

@@ -1,6 +1,8 @@
 package ch.kostceco.checksum.impl.test;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import junit.framework.Assert;
@@ -16,12 +18,16 @@ import ch.kostceco.checksum.impl.internal.Activator;
 public class ChecksumServiceTest
 {
 	private ServiceTracker<ChecksumService, ChecksumService> tracker;
-	
+
+	private String tmpDir;
 	@Before
 	public void setUp() throws Exception
 	{
 		tracker = new ServiceTracker<ChecksumService, ChecksumService>(Activator.getBundleContext(), ChecksumService.class, null);
 		tracker.open();
+
+		File file = File.createTempFile("tmp_", ".siard");
+		tmpDir = file.getParent();
 	}
 
 	@After
@@ -36,27 +42,43 @@ public class ChecksumServiceTest
 		ChecksumService service = tracker.getService();
 		Assert.assertNotNull(service);
 
-		File file1 = new File("U:/Incubator Projekte/SIARD.val/Documentation/gebaeudeversicherung.siard");
-		File file2 = new File("U:/Incubator Projekte/SIARD.val/Documentation/gebaeudeversicherung");
-		try
+		System.out.println();
+		System.out.println("Available Digests");
+		String[] digests = service.getAvailableDigests();
+		for (String digest : digests)
 		{
-			Assert.assertFalse(service.compare(file1, file2));
-		} catch (IOException e)
-		{
-			Assert.fail(e.getLocalizedMessage());
+			System.out.println("Digest: " + digest);
 		}
 
-		file1 = new File("U:/Incubator Projekte/SIARD.val/Documentation/gebaeudeversicherung.siard");
-		file2 = new File("U:/Incubator Projekte/SIARD.val/Documentation/gebaeudeversicherung2.siard");
 		try
 		{
-			Assert.assertTrue(service.compare(file1, file2));
+			File file = new File(tmpDir.concat(File.separator.concat("gebaeudeversicherung.siard")));
+			String s = service.getChecksum(new FileInputStream(file));
+			System.out.println(file.getName() + ": " + s);
+			
+			File file2 = new File(tmpDir.concat(File.separator.concat("gebaeudeversicherung2.siard")));
+			String s2 = service.getChecksum(new FileInputStream(file2));
+			System.out.println(file.getName() + ": " + s2);
+
+			File file3 = new File(tmpDir.concat(File.separator.concat("gebaeudeversicherung3.siard")));
+			String s3 = service.getChecksum(new FileInputStream(file3));
+			System.out.println(file.getName() + ": " + s3);
+
+			System.out.println(file.getName() + " equals " + file2.getName() + ": " + s.equals(s2));
+			System.out.println(file.getName() + " equals " + file3.getName() + ": " + s.equals(s3));
+			System.out.println(file2.getName() + " equals " + file3.getName() + ": " + s2.equals(s3));
+
+			Assert.assertTrue(s.equals(s2));
+			Assert.assertFalse(s.equals(s3));
+			Assert.assertFalse(s2.equals(s3));
+		} 
+		catch (FileNotFoundException e)
+		{
+			Assert.fail(e.getMessage());
 		} 
 		catch (IOException e)
 		{
-			Assert.fail(e.getLocalizedMessage());
+			Assert.fail(e.getMessage());
 		}
-
 	}
-
 }

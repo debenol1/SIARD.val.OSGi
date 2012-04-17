@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" name="ch.kostceco.filesystem.system">
-   <implementation class="ch.kostceco.filesystem.impl.internal.FilesystemComponent"/>
-   <service>
-      <provide interface="ch.kostceco.filesystem.api.service.FileSystem"/>
-   </service>
-   <reference bind="setLogService" cardinality="1..1" interface="org.osgi.service.log.LogService" name="LogService" policy="static" unbind="clearLogService"/>
-</scr:component>

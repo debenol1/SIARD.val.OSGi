@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" name="ch.kostceco.filesystem.system">
-   <implementation class="ch.kostceco.filesystem.impl.internal.service.FileSystemComponent"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" name="ch.kostceco.tools.siardval.fs.system">
+   <implementation class="ch.kostceco.tools.siardval.fs.impl.internal.service.FileSystemComponent"/>
    <service>
-      <provide interface="ch.kostceco.filesystem.api.service.FileSystem"/>
+      <provide interface="ch.kostceco.tools.siardval.fs.api.service.FileSystem"/>
    </service>
    <reference bind="setLogService" cardinality="1..1" interface="org.osgi.service.log.LogService" name="LogService" policy="static" unbind="releaseLogService"/>
 </scr:component>

@@ -1,16 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jacksum
-Bundle-SymbolicName: ch.kostceco.checksum.impl;singleton:=true
+Bundle-SymbolicName: ch.kostceco.tools.checksum.impl;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: lib/jacksum.jar,
  .
 Service-Component: OSGI-INF/checksum-component.xml
-Import-Package: ch.kostceco.checksum.api.service,
+Import-Package: ch.kostceco.tools.checksum.api.service,
  org.osgi.framework;version="1.6.0",
  org.osgi.service.component;version="1.1.0",
  org.osgi.service.log;version="1.3.0"
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: ch.kostceco.checksum.impl.internal.Activator
+Bundle-Activator: ch.kostceco.tools.checksum.impl.internal.Activator

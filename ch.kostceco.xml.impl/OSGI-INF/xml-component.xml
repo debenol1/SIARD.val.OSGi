@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.kostceco.xml.service">
-   <implementation class="ch.kostceco.xml.impl.internal.service.XmlServiceComponent"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" name="ch.kostceco.tools.siardval.xml.service">
+   <implementation class="ch.kostceco.tools.siardval.xml.impl.internal.service.XmlServiceComponent"/>
    <service>
-      <provide interface="ch.kostceco.xml.api.service.XmlService"/>
+      <provide interface="ch.kostceco.tools.siardval.xml.api.service.XmlService"/>
    </service>
 </scr:component>

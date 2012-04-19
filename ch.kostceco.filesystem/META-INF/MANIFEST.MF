@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Check File Extension Definition
-Bundle-SymbolicName: ch.kostceco.filesystem.api;singleton:=true
+Bundle-SymbolicName: ch.kostceco.tools.siardval.fs.api;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: ch.kostceco.filesystem.api.service
+Export-Package: ch.kostceco.tools.siardval.fs.api.service
 Import-Package: org.eclipse.core.runtime;version="3.4.0"

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" name="ch.kostceco.siard.console.component">
-   <implementation class="ch.kostceco.siard.impl.internal.service.SiardConsoleComponent"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" name="ch.kostceco.tools.siardval.siard.console.component">
+   <implementation class="ch.kostceco.tools.siardval.siard.impl.internal.service.SiardConsoleComponent"/>
    <service>
       <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
    </service>
-   <reference bind="addSiardService" cardinality="1..n" interface="ch.kostceco.siard.api.service.SiardService" name="SiardService" policy="static" unbind="removeSiardService"/>
+   <reference bind="addSiardService" cardinality="1..n" interface="ch.kostceco.tools.siardval.siard.api.service.SiardService" name="SiardService" policy="static" unbind="removeSiardService"/>
 </scr:component>

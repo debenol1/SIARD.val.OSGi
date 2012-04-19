@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test
-Bundle-SymbolicName: ch.kostceco.zip.impl.test
+Bundle-SymbolicName: ch.kostceco.tools.siardval.zip.test
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Christian Eugster
-Fragment-Host: ch.kostceco.zip.impl;bundle-version="[1.0.0,2.0.0)"
+Fragment-Host: ch.kostceco.tools.siardval.zip.impl;bundle-version="[1.0.0,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: junit.framework;version="4.8.2",
  org.eclipse.core.runtime;version="3.4.0",

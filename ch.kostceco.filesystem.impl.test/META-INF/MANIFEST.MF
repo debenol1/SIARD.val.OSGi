@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test
-Bundle-SymbolicName: ch.kostceco.filesystem.impl.test;singleton:=true
+Bundle-SymbolicName: ch.kostceco.tools.siardval.fs.test;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Christian Eugster
-Fragment-Host: ch.kostceco.filesystem.impl;bundle-version="[1.0.0,2.0.0)"
+Fragment-Host: ch.kostceco.tools.siardval.fs.impl;bundle-version="[1.0.0,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: ch.kostceco.filesystem.api.service,
+Import-Package: ch.kostceco.tools.siardval.fs.api.service,
  junit.framework;version="4.8.2",
  org.junit;version="4.8.2",
  org.osgi.util.tracker;version="1.5.0"

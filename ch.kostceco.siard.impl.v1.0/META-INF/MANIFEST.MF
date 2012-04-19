@@ -1,19 +1,19 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Siard Specification Implementation
-Bundle-SymbolicName: ch.kostceco.siard.impl.1.0;singleton:=true
+Bundle-SymbolicName: ch.kostceco.tools.siardval.siard.impl.1.0;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: ch.kostceco.siard.impl.internal.Activator
+Bundle-Activator: ch.kostceco.tools.siardval.siard.impl.internal.Activator
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/siard-component.xml, OSGI-INF/siard-console-component.xml
 Bundle-ClassPath: .
-Import-Package: ch.kostceco.checksum.api.service,
- ch.kostceco.filesystem.api.service,
- ch.kostceco.siard.api.service,
- ch.kostceco.xml.api.service,
- ch.kostceco.zip.api.service,
+Import-Package: ch.kostceco.tools.checksum.api.service,
+ ch.kostceco.tools.siardval.fs.api.service,
+ ch.kostceco.tools.siardval.siard.api.service,
+ ch.kostceco.tools.siardval.xml.api.service,
+ ch.kostceco.tools.siardval.zip.api.service,
  javax.xml,
  javax.xml.namespace,
  javax.xml.parsers,

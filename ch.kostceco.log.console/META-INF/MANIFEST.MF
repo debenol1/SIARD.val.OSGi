@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Console Logging
-Bundle-SymbolicName: ch.kostceco.log.file;singleton:=true
+Bundle-SymbolicName: ch.kostceco.tools.log.file;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

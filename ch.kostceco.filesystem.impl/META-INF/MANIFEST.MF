@@ -1,14 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Check File Extension Implementation
-Bundle-SymbolicName: ch.kostceco.filesystem.impl;singleton:=true
+Bundle-SymbolicName: ch.kostceco.tools.siardval.fs.impl;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Christian Eugster
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/validator-component.xml, OSGI-INF/system-component.xml
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: ch.kostceco.filesystem.impl.internal.Activator
-Import-Package: ch.kostceco.filesystem.api.service,
+Bundle-Activator: ch.kostceco.tools.siardval.fs.impl.internal.Activator
+Import-Package: ch.kostceco.tools.siardval.fs.api.service,
  org.eclipse.core.runtime;version="3.4.0",
  org.osgi.framework;version="1.6.0",
  org.osgi.service.component;version="1.1.0",

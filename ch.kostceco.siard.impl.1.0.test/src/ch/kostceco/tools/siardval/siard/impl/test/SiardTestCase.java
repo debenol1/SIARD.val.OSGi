@@ -1,13 +1,14 @@
 package ch.kostceco.tools.siardval.siard.impl.test;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
+
+import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.osgi.service.log.LogReaderService;
+import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 import ch.kostceco.tools.siardval.siard.api.service.SiardService;
@@ -15,47 +16,70 @@ import ch.kostceco.tools.siardval.siard.impl.internal.Activator;
 
 public class SiardTestCase
 {
-	private ServiceTracker<SiardService, SiardService> tracker;
+	private ServiceTracker<SiardService, SiardService> siardServiceTracker;
 
-	private File file;
+	private SiardService siardService;
+	
+	private ServiceTracker<LogService, LogService> logServiceTracker;
 
-	private SiardService service;
+	private ServiceTracker<LogReaderService, LogReaderService> logReaderServiceTracker;
+
+	private LogService logService;
+	
+	private LogReaderService logReaderService;
+	
+	private String tmpDir;
 	
 	@Before
 	public void setUp() throws Exception
 	{
-		String path = "U:/Incubator Projekte/SIARD.val/Test Data/gebaeudeversicherung.siard";
-		file = new File(path);
+		siardServiceTracker = new ServiceTracker<SiardService, SiardService>(Activator.getContext(), SiardService.class, null);
+		siardServiceTracker.open();
+		siardService = siardServiceTracker.getService();
 
-		tracker = new ServiceTracker<SiardService, SiardService>(Activator.getContext(), SiardService.class, null);
-		tracker.open();
+		logServiceTracker = new ServiceTracker<LogService, LogService>(Activator.getContext(), LogService.class, null);
+		logServiceTracker.open();
+		logService = logServiceTracker.getService();
 
-		service = tracker.getService();
+		logReaderServiceTracker = new ServiceTracker<LogReaderService, LogReaderService>(Activator.getContext(), LogReaderService.class, null);
+		logReaderServiceTracker.open();
+		logReaderService = logReaderServiceTracker.getService();
+		
+		File file = File.createTempFile("tmp_", ".siard");
+		tmpDir = file.getParent();
 	}
 
 	@After
 	public void tearDown() throws Exception
 	{
-		service = null;
-		tracker.close();
+		logReaderServiceTracker.close();
+		logServiceTracker.close();
+		siardServiceTracker.close();
 	}
 
+//	@Test
+//	public void testContentStructure()
+//	{
+//		try
+//		{
+//			Enumeration<? extends ZipEntry> entries = service.listEntries(file);
+//			while (entries.hasMoreElements())
+//			{
+//				ZipEntry entry = entries.nextElement();
+//				System.out.println(entry.getName() + " " + entry.getCompressedSize() + " " + entry.getSize());
+//			}
+//		} 
+//		catch (IOException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+
 	@Test
-	public void testContentStructure()
+	public void testValidateXsd()
 	{
-		try
-		{
-			Enumeration<? extends ZipEntry> entries = service.listEntries(file);
-			while (entries.hasMoreElements())
-			{
-				ZipEntry entry = entries.nextElement();
-				System.out.println(entry.getName() + " " + entry.getCompressedSize() + " " + entry.getSize());
-			}
-		} 
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		File file = new File(tmpDir.concat(File.separator.concat("gebaeudeversicherung.siard")));
+		Assert.assertTrue(siardService.validateXsd(file).isOK());
 	}
 }

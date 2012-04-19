@@ -3,6 +3,7 @@ package ch.kostceco.tools.siardval.siard.impl.internal.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 
@@ -357,7 +358,24 @@ public class SiardServiceComponent implements SiardService
 	@Override
 	public String getVersion(File file) throws Exception
 	{
-		InputStream in = zipService.getEntry(file, "header/metadata.xml");
+		InputStream in = zipService.getEntryAsStream(file, "header/metadata.xml");
 		return xmlService.getSiardVersion(in);
+	}
+
+	@Override
+	public IStatus validateXsd(File file)
+	{
+		IStatus status = Status.OK_STATUS;
+		try
+		{
+			URL url= zipService.getEntryAsUrl(file, "header/metadata.xsd");
+			status = xmlService.validate(url);
+		} 
+		catch (IOException e)
+		{
+			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Error reading file " + file.getAbsolutePath() + ".");
+			logService.log(LogService.LOG_ERROR, status.getMessage());
+		}
+		return status;
 	}
 }

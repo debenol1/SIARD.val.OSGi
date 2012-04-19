@@ -97,6 +97,22 @@ public class XmlServiceComponent implements XmlService
 	}
 
 	@Override
+	public IStatus validate(File schemaLocation)
+	{
+		IStatus status = Status.OK_STATUS;
+		try
+		{
+			SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+			factory.newSchema(schemaLocation);
+		} 
+		catch (SAXException e)
+		{
+			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Validierungsfehler", e);
+		}
+		return status;
+	}
+
+	@Override
 	public String getSiardVersion(InputStream in) throws IOException
 	{
 		SAXBuilder builder = new SAXBuilder();

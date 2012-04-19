@@ -15,5 +15,7 @@ public interface XmlService
 	
 	IStatus validate(URL schema);
 	
+	IStatus validate(File schema);
+	
 	String getSiardVersion(InputStream in) throws IOException;
 }

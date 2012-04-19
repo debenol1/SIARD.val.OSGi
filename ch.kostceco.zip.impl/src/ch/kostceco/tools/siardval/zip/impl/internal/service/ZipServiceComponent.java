@@ -52,24 +52,7 @@ public class ZipServiceComponent implements ZipService
 	@Override
 	public URL getEntryAsUrl(File file, String path) throws IOException
 	{
-		InputStream in = this.getEntryAsStream(file, path);
-		File tmp = File.createTempFile("tmp_", ".siard");
-		OutputStream out = new FileOutputStream(tmp);
-		try
-		{
-			byte[] b = new byte[in.available()];
-			while (in.available() > 0)
-			{
-				int size = in.read(b, 0, in.available());
-				out.write(b, 0, size);
-			}
-		}
-		finally
-		{
-			out.close();
-			in.close();
-		}
-		return file.toURI().toURL();
+		return getEntryAsFile(file, path).toURI().toURL();
 	}
 
 	@Override
@@ -240,6 +223,29 @@ public class ZipServiceComponent implements ZipService
 		}
 		log(status.isOK() ? LogService.LOG_INFO : LogService.LOG_ERROR, "Verschlüsselungstest: " + status.getMessage());
 		return status;
+	}
+
+	@Override
+	public File getEntryAsFile(File file, String path) throws IOException
+	{
+		InputStream in = this.getEntryAsStream(file, path);
+		File tmp = File.createTempFile("tmp_", ".siard");
+		OutputStream out = new FileOutputStream(tmp);
+		try
+		{
+			byte[] b = new byte[in.available()];
+			while (in.available() > 0)
+			{
+				int size = in.read(b, 0, in.available());
+				out.write(b, 0, size);
+			}
+		}
+		finally
+		{
+			out.close();
+			in.close();
+		}
+		return file;
 	}
 
 //	@Override

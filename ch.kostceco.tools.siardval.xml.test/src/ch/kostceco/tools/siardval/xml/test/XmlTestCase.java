@@ -99,6 +99,21 @@ public class XmlTestCase
 		}
 	}
 
+	@Test
+	public void testValidateMetadataXsdAgainstXmlSchema()
+	{
+		try
+		{
+			File file = new File(tmpDir.concat(File.separator.concat("metadata.xsd")));
+			URL url = file.toURI().toURL();
+			Assert.assertTrue(xmlService.validate(url).isOK());
+		} 
+		catch (MalformedURLException e)
+		{
+			Assert.fail("MalformedURLException thrown");
+		}
+	}
+
 //	@Test
 //	public void testGetSiardVersion()
 //	{

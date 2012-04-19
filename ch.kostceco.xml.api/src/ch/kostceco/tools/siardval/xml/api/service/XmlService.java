@@ -9,9 +9,11 @@ import org.eclipse.core.runtime.IStatus;
 
 public interface XmlService
 {
-	IStatus validate(InputStream in, File schema);
+	IStatus validate(InputStream xml, File schema);
 	
-	IStatus validate(InputStream in, URL schema);
+	IStatus validate(InputStream xml, URL schema);
+	
+	IStatus validate(URL schema);
 	
 	String getSiardVersion(InputStream in) throws IOException;
 }

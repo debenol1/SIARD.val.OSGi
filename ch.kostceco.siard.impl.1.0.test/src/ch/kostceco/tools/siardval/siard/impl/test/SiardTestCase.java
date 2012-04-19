@@ -80,6 +80,6 @@ public class SiardTestCase
 	public void testValidateXsd()
 	{
 		File file = new File(tmpDir.concat(File.separator.concat("gebaeudeversicherung.siard")));
-		Assert.assertTrue(siardService.validateXsd(file).isOK());
+		Assert.assertTrue(siardService.validateMetadataXsd(file).isOK());
 	}
 }

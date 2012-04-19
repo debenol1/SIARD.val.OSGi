@@ -19,7 +19,9 @@ public interface SiardService
 	 */
 	IStatus checkExtension(File file);
 	
-//	IStatus checkVersion(File file);
+	IStatus validateMetadataXsd(File file);
+
+	//	IStatus checkVersion(File file);
 	
 	/**
 	 * returns an enumeration of zip file entries

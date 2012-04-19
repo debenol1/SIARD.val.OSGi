@@ -3,7 +3,6 @@ package ch.kostceco.tools.siardval.siard.impl.internal.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 
@@ -363,13 +362,14 @@ public class SiardServiceComponent implements SiardService
 	}
 
 	@Override
-	public IStatus validateXsd(File file)
+	public IStatus validateMetadataXsd(File file)
 	{
 		IStatus status = Status.OK_STATUS;
 		try
 		{
-			URL url= zipService.getEntryAsUrl(file, "header/metadata.xsd");
-			status = xmlService.validate(url);
+			File tmp = zipService.getEntryAsFile(file, "header/metadata.xsd");
+			status = xmlService.validate(tmp);
+			tmp.delete();
 		} 
 		catch (IOException e)
 		{

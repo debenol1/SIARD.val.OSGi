@@ -48,6 +48,8 @@ public interface ZipService
 
 	URL getEntryAsUrl(File file, String path) throws IOException;
 
+	File getEntryAsFile(File file, String path) throws IOException;
+
 //	/**
 //	 * collects the directory entries of the zip file and returns them as an array of strings
 //	 * 

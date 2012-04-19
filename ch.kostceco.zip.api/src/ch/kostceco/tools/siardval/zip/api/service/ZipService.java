@@ -3,6 +3,7 @@ package ch.kostceco.tools.siardval.zip.api.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 
@@ -43,7 +44,9 @@ public interface ZipService
 
 //	IStatus checkDirectoryStructure(File file, String[] validEntries);
 
-	InputStream getEntry(File file, String path) throws IOException;
+	InputStream getEntryAsStream(File file, String path) throws IOException;
+
+	URL getEntryAsUrl(File file, String path) throws IOException;
 
 //	/**
 //	 * collects the directory entries of the zip file and returns them as an array of strings

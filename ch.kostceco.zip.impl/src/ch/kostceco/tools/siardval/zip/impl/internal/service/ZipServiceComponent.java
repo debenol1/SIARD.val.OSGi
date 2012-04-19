@@ -1,8 +1,11 @@
 package ch.kostceco.tools.siardval.zip.impl.internal.service;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipException;
 
@@ -32,20 +35,41 @@ public class ZipServiceComponent implements ZipService
 	
 	protected void startup(ComponentContext context)
 	{
-		log(LogService.LOG_DEBUG, "Service " + this.getClass().getName() + " started.");
 	}
 	
 	protected void shutdown(ComponentContext context)
 	{
-		log(LogService.LOG_DEBUG, "Service " + this.getClass().getName() + " stopped.");
 	}
 	
 	@Override
-	public InputStream getEntry(File file, String path) throws IOException
+	public InputStream getEntryAsStream(File file, String path) throws IOException
 	{
 		ZipFile zipFile = new ZipFile(file);
 		ZipEntry entry = zipFile.getEntry(path);
 		return zipFile.getInputStream(entry);
+	}
+
+	@Override
+	public URL getEntryAsUrl(File file, String path) throws IOException
+	{
+		InputStream in = this.getEntryAsStream(file, path);
+		File tmp = File.createTempFile("tmp_", ".siard");
+		OutputStream out = new FileOutputStream(tmp);
+		try
+		{
+			byte[] b = new byte[in.available()];
+			while (in.available() > 0)
+			{
+				int size = in.read(b, 0, in.available());
+				out.write(b, 0, size);
+			}
+		}
+		finally
+		{
+			out.close();
+			in.close();
+		}
+		return file.toURI().toURL();
 	}
 
 	@Override
@@ -225,11 +249,6 @@ public class ZipServiceComponent implements ZipService
 //		return null;
 //	}
 
-	public enum Method
-	{
-		STORED, DEFLATED, BZIP2, UNKNOWN;
-	}
-
 	@Override
 	public Enumeration<? extends java.util.zip.ZipEntry> listEntries(File file) throws IOException
 	{
@@ -288,11 +307,10 @@ public class ZipServiceComponent implements ZipService
 //		}
 //		return descendants;
 //	}
-//
-//	@Override
-//	public String getEntry(File file, String path) throws IOException
-//	{
-//		ZipFile zipFile = new ZipFile(file);
-//		return zipFile.getEntry(path).getName();
-//	}
+
+	public enum Method
+	{
+		STORED, DEFLATED, BZIP2, UNKNOWN;
+	}
+
 }

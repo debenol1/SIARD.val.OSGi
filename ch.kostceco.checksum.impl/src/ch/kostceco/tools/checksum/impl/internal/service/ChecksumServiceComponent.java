@@ -31,12 +31,10 @@ public class ChecksumServiceComponent implements ChecksumService
 	
 	protected void startup(ComponentContext context)
 	{
-		logService.log(LogService.LOG_INFO, "Service " + this.getClass().getName() + " started");
 	}
 	
 	protected void shutdown(ComponentContext context)
 	{
-		logService.log(LogService.LOG_INFO, "Service " + this.getClass().getName() + " stopped");
 	}
 
 	@Override

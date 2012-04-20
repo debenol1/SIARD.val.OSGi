@@ -77,9 +77,12 @@ public class SiardTestCase
 //	}
 
 	@Test
-	public void testValidateXsd()
+	public void testMetadata()
 	{
 		File file = new File(tmpDir.concat(File.separator.concat("gebaeudeversicherung.siard")));
+		Assert.assertTrue(siardService.validateMetadataXmlAgainstMetadataXsd(file).isOK());
+		Assert.assertTrue(siardService.validateMetadataXmlAgainstInternalMetadataXsd(file).isOK());
 		Assert.assertTrue(siardService.validateMetadataXsd(file).isOK());
+		Assert.assertTrue(siardService.validatesMetadataXsdAgainstInternalMetadataXsd(file).isOK());
 	}
 }

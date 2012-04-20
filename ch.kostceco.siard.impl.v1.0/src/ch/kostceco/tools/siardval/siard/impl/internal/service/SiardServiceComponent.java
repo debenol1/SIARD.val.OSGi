@@ -3,6 +3,7 @@ package ch.kostceco.tools.siardval.siard.impl.internal.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 
@@ -374,6 +375,71 @@ public class SiardServiceComponent implements SiardService
 		catch (IOException e)
 		{
 			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Error reading file " + file.getAbsolutePath() + ".");
+			logService.log(LogService.LOG_ERROR, status.getMessage());
+		}
+		return status;
+	}
+
+	@Override
+	public IStatus validateMetadataXmlAgainstMetadataXsd(File file)
+	{
+		IStatus status = Status.OK_STATUS;
+		try
+		{
+			InputStream in = zipService.getEntryAsStream(file, "header/metadata.xml");
+			File tmp = zipService.getEntryAsFile(file, "header/metadata.xsd");
+			status = xmlService.validate(in, tmp);
+			tmp.delete();
+		} 
+		catch (IOException e)
+		{
+			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Error reading file " + file.getAbsolutePath() + ".");
+			logService.log(LogService.LOG_ERROR, status.getMessage());
+		}
+		return status;
+	}
+
+	@Override
+	public IStatus validateMetadataXmlAgainstInternalMetadataXsd(File file)
+	{
+		IStatus status = Status.OK_STATUS;
+		try
+		{
+			InputStream in = zipService.getEntryAsStream(file, "header/metadata.xml");
+			URL schema = xmlService.getClass().getResource("/META-INF/metadata.xsd");
+			status = xmlService.validate(in, schema);
+		} 
+		catch (IOException e)
+		{
+			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Error reading file " + file.getAbsolutePath() + ".");
+			logService.log(LogService.LOG_ERROR, status.getMessage());
+		}
+		return status;
+	}
+
+	@Override
+	public IStatus validatesMetadataXsdAgainstInternalMetadataXsd(File file)
+	{
+		IStatus status = Status.OK_STATUS;
+		try
+		{
+			InputStream in1 = zipService.getEntryAsStream(file, "header/metadata.xsd");
+			String checksum1 = checksumService.getChecksum(in1);
+			InputStream in2 = xmlService.getClass().getResourceAsStream("/META-INF/metadata.xsd");
+			String checksum2 = checksumService.getChecksum(in2);
+			if (checksum1.equals(checksum2)) 
+			{
+				logService.log(LogService.LOG_INFO, "Validation of metadata.xsd passed.");
+			}
+			else
+			{
+				status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Validation of metadata.xsd (" + checksum1 + ") against local metadata.xsd failed.");
+				logService.log(LogService.LOG_ERROR, status.getMessage());
+			}
+		} 
+		catch (IOException e)
+		{
+			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Error opening file " + file.getName() + ".");
 			logService.log(LogService.LOG_ERROR, status.getMessage());
 		}
 		return status;

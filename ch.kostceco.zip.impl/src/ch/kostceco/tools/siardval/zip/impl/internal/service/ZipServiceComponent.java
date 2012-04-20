@@ -61,31 +61,50 @@ public class ZipServiceComponent implements ZipService
 		IStatus status = Status.OK_STATUS;
 		try
 		{
+			int errors = 0;
+			logService.log(LogService.LOG_INFO, "Checking file " + file.getAbsolutePath() + " for compression methods");
 			ZipFile zipFile = new ZipFile(file);
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			while (entries.hasMoreElements())
+			try
 			{
-				ZipEntry entry = entries.nextElement();
-				if (entry.getMethod() != ZipEntry.STORED)
+				Enumeration<? extends ZipEntry> entries = zipFile.entries();
+				while (entries.hasMoreElements())
 				{
-					status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Die Datei " + file.getName() + " im Verzeichnis " + file.getParent() + " enthält komprimierte Daten.");
-					break;
+					ZipEntry entry = entries.nextElement();
+					if (entry.getMethod() == ZipEntry.STORED)
+					{
+						logService.log(LogService.LOG_INFO, "Checking entry " + entry.getName() + ": " + Method.getMethod(entry.getMethod()).toString());
+					}
+					else
+					{
+						if (status.isOK())
+						{
+							status = new Status(IStatus.CANCEL, Activator.getBundleContext().getBundle().getSymbolicName(), "File " + file.getAbsolutePath() + " is compressed (see log file for details).");
+						}
+						errors++;
+						logService.log(LogService.LOG_ERROR, "Checking entry " + entry.getName() + ": " + Method.getMethod(entry.getMethod()).toString());
+					}
 				}
 			}
-			zipFile.close();
+			finally
+			{
+				zipFile.close();
+				if (status.isOK())
+				{
+					logService.log(LogService.LOG_INFO, "Compression check found no errors.");
+				}
+				else
+				{
+					logService.log(LogService.LOG_INFO, "Compression check found " + errors + " errors.");
+				}
+			}
 		}
 		catch (IOException e)
 		{
-			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Die Datei " + file.getName() + " im Verzeichnis " + file.getParent() + " enthält komprimierte Daten.");
+			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Error opening file " + file.getAbsolutePath());
 		}
-		log(status.getSeverity() == IStatus.OK ? LogService.LOG_INFO : LogService.LOG_ERROR, "Kompressionstest: " + status.getMessage());
 		return status;
 	}
 
-	private void log(int level, String message)
-	{
-		logService.log(level, message);
-	}
 	/**
 	 * Checks if file is a valid zip file. This method equals to checkZip(file, Method.HEADER_CHECK)
 	 * 
@@ -107,35 +126,41 @@ public class ZipServiceComponent implements ZipService
 		case HEADER_CHECK:
 		{
 			status = checkHeader(file);
+			break;
 		}
 		case FULL_CHECK:
 		{
 			status = fullCheck(file);
+			break;
 		}
 		default:
 		{
 			status = fullCheck(file);
+			break;
 		}
 		}
-		log(status.isOK() ? LogService.LOG_INFO : LogService.LOG_ERROR, "Integritätstest (" + method.toString() + "):" + status.getMessage());
 		return status;
 	}
 
 	private IStatus checkHeader(File file)
 	{
+		logService.log(LogService.LOG_INFO, "Checking integrity (readability) of file " + file.getAbsolutePath() + " (HEADER_CHECK)");
 		IStatus status = Status.OK_STATUS;
 	    try 
 	    {
 	        ZipFile zipFile = new ZipFile(file);
 	        zipFile.close();
+			logService.log(LogService.LOG_INFO, "Integrity successfully checked.");
 	    } 
 	    catch (ZipException e) 
 	    {
-			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Beim Lesen der Datei " + file.getName() + " in " + file.getParent() + " ist ein Fehler aufgetreten.", e);
+			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Read error occured.", e);
+			logService.log(LogService.LOG_ERROR, status.getMessage());
 	    } 
 	    catch (IOException e) 
 	    {
-			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Beim Öffnen der Datei " + file.getName() + " in " + file.getParent() + " ist ein Fehler aufgetreten.", e);
+			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Error opening file " + file.getAbsolutePath() + ".", e);
+			logService.log(LogService.LOG_ERROR, status.getMessage());
 	    }
 	    return status;
 	}
@@ -151,7 +176,8 @@ public class ZipServiceComponent implements ZipService
 		IStatus status = Status.OK_STATUS;
 	    try 
 	    {
-			logService.log(LogService.LOG_INFO, "Check integrity of file " + file.getName() + ".");
+	    	int errors = 0;
+			logService.log(LogService.LOG_INFO, "Check integrity (readability) of file " + file.getName() + " (FULL_CHECK).");
 	        ZipFile zipFile = new ZipFile(file);
 	        Enumeration<? extends ZipEntry> entries = zipFile.entries();
 	        while (entries.hasMoreElements())
@@ -164,37 +190,50 @@ public class ZipServiceComponent implements ZipService
         		}
         		else
         		{
-	        		int size = 0;
     	        	try
     	        	{
+    	        		int size = 0;
 		        		in = zipFile.getInputStream(entry);
 			        	while (in.available() > 0)
 			        	{
 			        		byte[] b = new byte[in.available()];
 			        		size += in.read(b, 0, in.available());
 			        	}
+	        			logService.log(LogService.LOG_INFO, "Entry " + entry.getName() + " checked: size " + size + " bytes.");
 	        		}
+    	        	catch(IOException e)
+    	        	{
+    	        		errors++;
+	        			logService.log(LogService.LOG_ERROR, "Entry " + entry.getName() + " checked: error occured.");
+    	        	}
     	        	finally
     	        	{
     	        		if (in != null)
     	        		{
-    	        			logService.log(LogService.LOG_INFO, "Entry " + entry.getName() + " read successfully having " + size + " bytes.");
     	    	        	in.close();
     	        		}
     	        	}
 	        	}
 	        }
 	        zipFile.close();
+			if (status.isOK())
+			{
+				logService.log(LogService.LOG_INFO, "Encryption check found no errors.");
+			}
+			else
+			{
+				logService.log(LogService.LOG_INFO, "Encryption check found " + errors + " errors.");
+			}
 	    } 
 	    catch (ZipException e) 
 	    {
-			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Beim Lesen der Datei " + file.getName() + " in " + file.getParent() + " ist ein Fehler aufgetreten.", e);
-			logService.log(LogService.LOG_ERROR, "Error reading file " + file.getName() + " for integrity check.");
+			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Read error occured.", e);
+			logService.log(LogService.LOG_ERROR, status.getMessage());
 	    } 
 	    catch (IOException e) 
 	    {
-			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Beim Öffnen der Datei " + file.getName() + " in " + file.getParent() + " ist ein Fehler aufgetreten.", e);
-			logService.log(LogService.LOG_ERROR, "Error opening file " + file.getName() + " for integrity check.");
+			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Error opening " + file.getAbsolutePath() + ".", e);
+			logService.log(LogService.LOG_ERROR, status.getMessage());
 	    } 
 	    return status;
 	}
@@ -205,23 +244,51 @@ public class ZipServiceComponent implements ZipService
 		IStatus status = Status.OK_STATUS;
 		try
 		{
+			int errors = 0;
+			logService.log(LogService.LOG_INFO, "Check encryption of file " + file.getName() + ".");
 			ZipFile zipFile = new ZipFile(file);
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			while (entries.hasMoreElements())
+			try
 			{
-				ZipEntry entry = entries.nextElement();
-				if (entry.isEncrypted())
+				Enumeration<? extends ZipEntry> entries = zipFile.entries();
+				while (entries.hasMoreElements())
 				{
-					status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Die Datei " + file.getName() + " in " + file.getParent() + " ist verschlüsselt.");
+					ZipEntry entry = entries.nextElement();
+					if (entry.isDirectory())
+					{
+						logService.log(LogService.LOG_INFO, "Entry " + entry.getName() + " is directory.");
+					}
+					else if (entry.isEncrypted())
+					{
+						if (status.isOK())
+						{
+							status = new Status(IStatus.CANCEL, Activator.getBundleContext().getBundle().getSymbolicName(), "File " + file.getAbsolutePath() + " is encrypted (see log file for details).");
+						}
+						errors++;
+						logService.log(LogService.LOG_ERROR, "Entry " + entry.getName() + " is encrypted.");
+					}
+					else
+					{
+						logService.log(LogService.LOG_INFO, "Entry " + entry.getName() + " is not encrypted.");
+					}
 				}
 			}
-			zipFile.close();
+			finally
+			{
+				zipFile.close();
+				if (status.isOK())
+				{
+					logService.log(LogService.LOG_INFO, "Encryption check found no errors.");
+				}
+				else
+				{
+					logService.log(LogService.LOG_INFO, "Encryption check found " + errors + " errors.");
+				}
+			}
 		}
 		catch (IOException e)
 		{
-			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Beim Öffnen der Datei " + file.getName() + " in " + file.getParent() + " ist ein Fehler aufgetreten.", e);
+			status = new Status(IStatus.ERROR, Activator.getBundleContext().getBundle().getSymbolicName(), "Error opening file " + file.getAbsolutePath() + ".", e);
 		}
-		log(status.isOK() ? LogService.LOG_INFO : LogService.LOG_ERROR, "Verschlüsselungstest: " + status.getMessage());
 		return status;
 	}
 
@@ -245,7 +312,7 @@ public class ZipServiceComponent implements ZipService
 			out.close();
 			in.close();
 		}
-		return file;
+		return tmp;
 	}
 
 //	@Override
@@ -317,6 +384,29 @@ public class ZipServiceComponent implements ZipService
 	public enum Method
 	{
 		STORED, DEFLATED, BZIP2, UNKNOWN;
+		
+		public static Method getMethod(int method)
+		{
+			switch(method)
+			{
+			case ZipEntry.STORED:
+			{
+				return STORED;
+			}
+			case ZipEntry.DEFLATED:
+			{
+				return DEFLATED;
+			}
+			case ZipEntry.BZIP2:
+			{
+				return BZIP2;
+			}
+			default:
+			{
+				return UNKNOWN;
+			}
+			}
+		}
 	}
 
 }

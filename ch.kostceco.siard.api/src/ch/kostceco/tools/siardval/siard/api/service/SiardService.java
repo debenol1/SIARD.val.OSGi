@@ -68,5 +68,15 @@ public interface SiardService
 	 * @return
 	 * @throws IOException
 	 */
-	String getVersion(File file) throws Exception;
+	String getVersion(File file) throws IOException;
+
+	/**
+	 * Checks the siard version. Extracts the siard version from the siard file and compares it with the
+	 * siard version provided in the service respective. If same version returns IStatus.OK_STATUS, if 
+	 * wrong version returns IStatus.CANCEL_STATUS, if an error occures returns IStatus.ERROR_STATUS with appropriate message;
+	 * 
+	 * @param file
+	 * @return
+	 */
+	IStatus checkVersion(File file);
 }

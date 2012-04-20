@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: ch.kostceco.tools.siardval.service.impl.b.test
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Christian Eugster
+Fragment-Host: ch.kostceco.tools.siardval.service.impl.b;bundle-version="[1.0.0,2.0.0)"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.junit
+Import-Package: ch.kostceco.tools.siardval.service.api,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.osgi.framework;version="1.6.0",
+ org.osgi.util.tracker;version="1.5.0"

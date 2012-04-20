@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="startup" deactivate="shutdown" name="ch.kostceco.tools.siardval.service.impl.b">
+   <implementation class="ch.kostceco.tools.siardval.service.impl.b.internal.StepBValidatorComponent"/>
+   <property name="service.ranking" type="Integer" value="1000000000"/>
+   <reference bind="setLogService" cardinality="1..1" interface="org.osgi.service.log.LogService" name="LogService" policy="static" unbind="releaseLogService"/>
+   <reference bind="setSiardService" cardinality="1..1" interface="ch.kostceco.tools.siardval.siard.api.service.SiardService" name="SiardService" policy="static" unbind="releaseSiardService"/>
+   <service>
+      <provide interface="ch.kostceco.tools.siardval.service.api.SiardValidator"/>
+   </service>
+</scr:component>

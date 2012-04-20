@@ -24,7 +24,7 @@ public class SiardServiceComponent implements SiardService
 	private static final String PROPERTY_KEY_SIARD_VERSION = "siard.version";
 	
 	private static final String PROPERTY_KEY_SIARD_EXTENSIONS = "siard.extensions";
-	
+
 	private LogService logService;
 	
 	private ZipService zipService;
@@ -331,13 +331,19 @@ public class SiardServiceComponent implements SiardService
 	public IStatus checkExtension(File file)
 	{
 		IStatus status = Status.OK_STATUS;
+		logService.log(LogService.LOG_INFO, "Checking extension of file " + file.getAbsolutePath() + ".");
 		Object property = context.getProperties().get(PROPERTY_KEY_SIARD_EXTENSIONS);
 		if (property instanceof String)
 		{
 			String extension = (String) property;
 			if (file.getName().endsWith(extension))
 			{
-				status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Invalid file extension (only " + extension + " is allowed).");
+				logService.log(LogService.LOG_INFO, "Check passed.");
+			}
+			else
+			{
+				logService.log(LogService.LOG_ERROR, "Check found invalid file extension, only extension " + extension + " allowed.");
+				status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), status.getMessage());
 			}
 		}
 		else if (property instanceof String[])
@@ -347,19 +353,42 @@ public class SiardServiceComponent implements SiardService
 			{
 				if (file.getName().endsWith(extension)) 
 				{
+					logService.log(LogService.LOG_INFO, "Check passed.");
 					return status;
 				}
 			}
-			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Invalid file extension (only " + property.toString() + " is allowed).");
+			logService.log(LogService.LOG_ERROR, "Check found invalid file extension, only one of " + extensions + " allowed.");
+			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), status.getMessage());
 		}
 		return status;
 	}
 
 	@Override
-	public String getVersion(File file) throws Exception
+	public IStatus checkVersion(File file)
 	{
-		InputStream in = zipService.getEntryAsStream(file, "header/metadata.xml");
-		return xmlService.getSiardVersion(in);
+		IStatus status = Status.OK_STATUS;
+		try
+		{
+			logService.log(LogService.LOG_INFO, "Checking siard version of file " + file.getAbsolutePath() + ".");
+			String siardVersion = this.getVersion(file);
+			logService.log(LogService.LOG_INFO, "Found siard version: " + siardVersion + ".");
+			Object internalVersion = context.getProperties().get(PROPERTY_KEY_SIARD_VERSION);
+			if (siardVersion.equals(internalVersion))
+			{
+				logService.log(LogService.LOG_INFO, "Version found correspondents to current service.");
+			}
+			else
+			{
+				status = new Status(IStatus.CANCEL, Activator.getContext().getBundle().getSymbolicName(), "Wrong version for current service. Trying to find suitable service...");
+				logService.log(LogService.LOG_WARNING, status.getMessage());
+			}
+		}
+		catch (IOException e)
+		{
+			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Error opening file " + file.getAbsolutePath() + ".");
+			logService.log(LogService.LOG_ERROR, status.getMessage());
+		}
+		return status;
 	}
 
 	@Override
@@ -368,9 +397,11 @@ public class SiardServiceComponent implements SiardService
 		IStatus status = Status.OK_STATUS;
 		try
 		{
+			logService.log(LogService.LOG_INFO, "Validating metadata.xsd of file " + file.getAbsolutePath() + ".");
 			File tmp = zipService.getEntryAsFile(file, "header/metadata.xsd");
 			status = xmlService.validate(tmp);
 			tmp.delete();
+			logService.log(LogService.LOG_INFO, "Validation passed.");
 		} 
 		catch (IOException e)
 		{
@@ -386,10 +417,12 @@ public class SiardServiceComponent implements SiardService
 		IStatus status = Status.OK_STATUS;
 		try
 		{
+			logService.log(LogService.LOG_INFO, "Validating metadata.xml of file " + file.getAbsolutePath() + ".");
 			InputStream in = zipService.getEntryAsStream(file, "header/metadata.xml");
 			File tmp = zipService.getEntryAsFile(file, "header/metadata.xsd");
 			status = xmlService.validate(in, tmp);
 			tmp.delete();
+			logService.log(LogService.LOG_INFO, "Validation passed.");
 		} 
 		catch (IOException e)
 		{
@@ -405,10 +438,12 @@ public class SiardServiceComponent implements SiardService
 		IStatus status = Status.OK_STATUS;
 		try
 		{
+			logService.log(LogService.LOG_INFO, "Validating metadata.xsd of file " + file.getAbsolutePath() + " against local metadata.xsd.");
 			InputStream in = zipService.getEntryAsStream(file, "header/metadata.xml");
 			URL schema = xmlService.getClass().getResource("/META-INF/metadata.xsd");
 			status = xmlService.validate(in, schema);
-		} 
+			logService.log(LogService.LOG_INFO, "Validation passed.");
+		}
 		catch (IOException e)
 		{
 			status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Error reading file " + file.getAbsolutePath() + ".");
@@ -423,17 +458,18 @@ public class SiardServiceComponent implements SiardService
 		IStatus status = Status.OK_STATUS;
 		try
 		{
+			logService.log(LogService.LOG_INFO, "Validating metadata.xsd of file " + file.getAbsolutePath() + ".");
 			InputStream in1 = zipService.getEntryAsStream(file, "header/metadata.xsd");
 			String checksum1 = checksumService.getChecksum(in1);
 			InputStream in2 = xmlService.getClass().getResourceAsStream("/META-INF/metadata.xsd");
 			String checksum2 = checksumService.getChecksum(in2);
 			if (checksum1.equals(checksum2)) 
 			{
-				logService.log(LogService.LOG_INFO, "Validation of metadata.xsd passed.");
+				logService.log(LogService.LOG_INFO, "Validation passed.");
 			}
 			else
 			{
-				status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Validation of metadata.xsd (" + checksum1 + ") against local metadata.xsd failed.");
+				status = new Status(IStatus.ERROR, Activator.getContext().getBundle().getSymbolicName(), "Validation failed.");
 				logService.log(LogService.LOG_ERROR, status.getMessage());
 			}
 		} 
@@ -443,5 +479,32 @@ public class SiardServiceComponent implements SiardService
 			logService.log(LogService.LOG_ERROR, status.getMessage());
 		}
 		return status;
+	}
+
+	@Override
+	public String getVersion(File file) throws IOException
+	{
+		String version = null;
+		InputStream in = null;
+		try
+		{
+			in = zipService.getEntryAsStream(file, "header/metadata.xml");
+			version = xmlService.getSiardVersion(in);
+		}
+		finally
+		{
+			if (in != null)
+			{
+				try
+				{
+					in.close();
+				}
+				catch(IOException e)
+				{
+					
+				}
+			}
+		}
+		return version;
 	}
 }

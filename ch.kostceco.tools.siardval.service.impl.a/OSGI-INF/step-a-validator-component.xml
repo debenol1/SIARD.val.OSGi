@@ -6,4 +6,5 @@
       <provide interface="ch.kostceco.tools.siardval.service.api.SiardValidator"/>
    </service>
    <reference bind="setZipService" cardinality="1..1" interface="ch.kostceco.tools.siardval.zip.api.service.ZipService" name="ZipService" policy="static" unbind="releaseZipService"/>
+   <property name="service.ranking" type="Integer" value="2000000000"/>
 </scr:component>
